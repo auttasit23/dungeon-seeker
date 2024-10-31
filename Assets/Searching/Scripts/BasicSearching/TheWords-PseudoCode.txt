@@ -1,0 +1,53 @@
+char[,] boards เป็น 2D array ที่เก็ยตัวอักษร
+string[] words เป็น array ที่เก็บคำที่ต้องการค้นหา
+
+Array.Sort(words, (a, b) => b.Length.CompareTo(a.Length));
+
+Array(int,int) directions เป็น array ของ direction
+กำหนดให้ directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1), (-1, 1)]
+
+กำหนด Dictionary<string, bool> foundWords; เอาไว้เก็บคำที่เจอแล้ว
+
+for loop word ใน array words {
+    w0 = ตัวอักษรแรกของ word
+    ต้นหาตำแหน่งของ w0 ใน boards เก็บไว้ในตัวแปร i, j
+    if เจอ i, j {
+        สร้าง int[,] visitedBoard ให้มีขนาดเท่ากับ boards
+        เริ่มต้นกำหนดให้ทุกค่าใน visitedBoard เป็น -1
+        
+        visitedBoard[i, j] = 0 
+        
+        for loop wi=1 ถึง word.length {
+            char w = word[wi]
+            
+            ต้นหาใน visitedBoard ว่ามีตำแหน่งที่มีค่าเป็น wi-1 หรือไม่
+            if ถ้าเจอให้เก็บไว้ใน vi, vj {
+                for loop direction (dx, dy) ใน directions {
+                    ตรวจสอบว่า vi+dx, vj+dy อยู่ในขอบของ boards หรือไม่
+                    ตรวจสอบว่า visitedBoard[vi+dx, vj+dy] มีค่าเป็น -1 หรือไม่
+                    ตรวจสอบว่า boards[vi+dx, vj+dy] มีค่าเป็น w หรือไม่
+                    ถ้าผ่านเงื่อนไขให้กำหนดให้ visitedBoard[vi+dx, vj+dy] = wi
+                }
+            }
+        }
+
+        for loop index (i,j) ใน visitedBoard {
+            ตรวจสอบว่า visitedBoard[i, j] มีค่าเป็น word.length-1 หรือไม่
+            if ถ้าเจอ {
+                foundWords[word] = true;
+            }
+        }
+    }
+}
+
+ประกาศ LinkedList<string> resultWords; เอาไว้เก็บคำที่เจอแล้วเอาไว้ไปแสดงผล
+
+for loop key ใน dictionary foundWords {
+    ถ้า foundWords[key] เป็น true {
+        resultWords.AddLast(key);
+    }
+}
+
+foreach word ใน resultWords {
+    Debug.Log(word)
+}
