@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 7577841510190773765}
   - component: {fileID: 684710481886379336}
   - component: {fileID: 1124356193795777934}
+  - component: {fileID: -7187014218667488598}
   m_Layer: 0
   m_Name: OOPApple
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,8 +51,6 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -104,3 +103,25 @@ MonoBehaviour:
   positionY: 0
   mapGenerator: {fileID: 0}
   healPoint: 5
+  isBonues: 0
+--- !u!65 &-7187014218667488598
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6476303242912763235}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.79999995, y: 0.79999995, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}

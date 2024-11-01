@@ -149,3 +149,7 @@ MonoBehaviour:
   mapGenerator: {fileID: 0}
   energy: 4
   AttackPoint: 0
+  player: {fileID: 0}
+  moveInterval: 1
+  obstacleTags:
+  - Obstacle

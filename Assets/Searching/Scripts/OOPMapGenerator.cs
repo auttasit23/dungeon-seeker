@@ -257,7 +257,7 @@ namespace Searching
             }
             foreach (var enemy in list)
             {
-                enemy.RandomMove();
+                enemy.MoveToPlayer();
             }
         }
     }
