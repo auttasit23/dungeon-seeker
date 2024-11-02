@@ -35,10 +35,6 @@ namespace Searching
             {
                 Move(Vector2.right);
             }
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                UseFireStorm();
-            }
         }
 
         public void Attack(OOPEnemy _enemy)

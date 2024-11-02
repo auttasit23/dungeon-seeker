@@ -25,6 +25,9 @@ namespace Searching
             }
             GetRemainEnergy();
             GeneratePathToPlayer();
+            
+            Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+            currentNode = startNode;
         }
 
         private void Update()
@@ -88,7 +91,8 @@ namespace Searching
             Node endNode = AStarManager.instance.FindNearestNode(player.position);
             path = AStarManager.instance.GeneratePath(startNode, endNode);
             currentPathIndex = 0;
-    
+
+            CreatePath();
             MoveOneStepTowardsPlayer();
         }
 
@@ -104,14 +108,18 @@ namespace Searching
 
         private void MoveToPosition(int x, int y)
         {
-            mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
-            mapGenerator.enemies[positionX, positionY] = null;
-            positionX = x;
-            positionY = y;
-            mapGenerator.mapdata[positionX, positionY] = mapGenerator.enemy;
-            mapGenerator.enemies[positionX, positionY] = this;
-
-            transform.position = new Vector3(positionX, positionY, 0);
+            if (!HasPlacement(x, y))
+            {
+                mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
+                mapGenerator.enemies[positionX, positionY] = null;
+                positionX = x;
+                positionY = y;
+                mapGenerator.mapdata[positionX, positionY] = mapGenerator.enemy;
+                mapGenerator.enemies[positionX, positionY] = this;
+                
+                Vector3 targetPosition = new Vector3(positionX, positionY, 0);
+                StartCoroutine(MoveSmoothly(targetPosition));
+            }
         }
     }
 }

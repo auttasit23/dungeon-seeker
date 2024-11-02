@@ -16,6 +16,7 @@ namespace Searching
 
         protected bool isAlive;
         protected bool isFreeze;
+        private bool isMoving = false;
 
         // Start is called before the first frame update
         protected void GetRemainEnergy()
@@ -25,7 +26,7 @@ namespace Searching
 
         public virtual void Move(Vector2 direction)
         {
-            if (isFreeze == true)
+            if (isFreeze == true || isMoving)
             {
                 GetComponent<SpriteRenderer>().color = Color.white;
                 isFreeze = false;
@@ -47,35 +48,30 @@ namespace Searching
                     mapGenerator.potions[toX, toY].Hit();
                     positionX = toX;
                     positionY = toY;
-                    transform.position = new Vector3(positionX, positionY, 0);
                 }
                 else if (IsPotionBonus(toX, toY))
                 {
                     mapGenerator.potions[toX, toY].Hit();
                     positionX = toX;
                     positionY = toY;
-                    transform.position = new Vector3(positionX, positionY, 0);
                 }
                 else if (IsExit(toX, toY))
                 {
                     mapGenerator.Exit.Hit();
                     positionX = toX;
                     positionY = toY;
-                    transform.position = new Vector3(positionX, positionY, 0);
                 }
                 else if (IsKey(toX, toY))
                 {
                     mapGenerator.keys[toX, toY].Hit();
                     positionX = toX;
                     positionY = toY;
-                    transform.position = new Vector3(positionX, positionY, 0);
                 }
                 else if (IsFireStorm(toX, toY))
                 {
                     mapGenerator.fireStorms[toX, toY].Hit();
                     positionX = toX;
                     positionY = toY;
-                    transform.position = new Vector3(positionX, positionY, 0);
                 }
                 else if (IsEnemy(toX, toY))
                 {
@@ -86,9 +82,11 @@ namespace Searching
             {
                 positionX = toX;
                 positionY = toY;
-                transform.position = new Vector3(positionX, positionY, 0);
                 TakeDamage(1);
             }
+            
+            Vector3 targetPosition = new Vector3(positionX, positionY, 0);
+            StartCoroutine(MoveSmoothly(targetPosition));
 
             if (this is OOPPlayer)
             {
@@ -100,6 +98,24 @@ namespace Searching
                 }
             }
 
+        }
+        
+        public IEnumerator MoveSmoothly(Vector3 targetPosition)
+        {
+            isMoving = true;
+            Vector3 startPosition = transform.position;
+            float elapsedTime = 0f;
+            float duration = 0.5f;
+
+            while (elapsedTime < duration)
+            {
+                transform.position = Vector3.Lerp(startPosition, targetPosition, elapsedTime / duration);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+    
+            transform.position = targetPosition;
+            isMoving = false;
         }
         // hasPlacement คืนค่า true ถ้ามีการวางอะไรไว้บน map ที่ตำแหน่ง x,y
         public bool HasPlacement(int x, int y)
