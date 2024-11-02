@@ -60,6 +60,7 @@ namespace Searching
         public int key = 5;
         public int enemy = 6;
         public int fireStorm = 7;
+        Dictionary<Vector2, Node> nodes = new Dictionary<Vector2, Node>();
 
         // Start is called before the first frame update
         void Start()
@@ -82,10 +83,14 @@ namespace Searching
                         GameObject obj = Instantiate(floorsPrefab[r], new Vector3(x, y, 1), Quaternion.identity);
                         obj.transform.parent = floorParent;
                         obj.name = "floor_" + x + ", " + y;
+                        
+                        Node node = obj.AddComponent<Node>();
+                        node.connections = new List<Node>();
+                        nodes[new Vector2(x, y)] = node;
                     }
                 }
             }
-
+            ConnectNodes();
             player.mapGenerator = this;
             player.positionX = playerStartPos.x;
             player.positionY = playerStartPos.y;
@@ -100,7 +105,6 @@ namespace Searching
                 int y = Random.Range(0, Y);
                 if (mapdata[x, y] == 0)
                 {
-                    PlaceDemonWall(x, y);
                     count++;
                 }
             }
@@ -140,6 +144,7 @@ namespace Searching
                 if (mapdata[x, y] == empty)
                 {
                     PlaceEnemy(x, y);
+                    AStarManager.instance.FindNearestNode(player.transform.position);
                     count++;
                 }
             }
@@ -159,6 +164,31 @@ namespace Searching
 
             mapdata[X - 1, Y - 1] = exit;
             Exit.transform.position = new Vector3(X - 1, Y - 1, 0);
+        }
+        
+        void ConnectNodes()
+        {
+            foreach (var kvp in nodes)
+            {
+                Vector2 position = kvp.Key;
+                Node node = kvp.Value;
+                
+                List<Vector2> neighbors = new List<Vector2>()
+                {
+                    position + Vector2.up,
+                    position + Vector2.down,
+                    position + Vector2.left,
+                    position + Vector2.right
+                };
+                
+                foreach (Vector2 neighborPos in neighbors)
+                {
+                    if (nodes.TryGetValue(neighborPos, out Node neighborNode))
+                    {
+                        node.connections.Add(neighborNode);
+                    }
+                }
+            }
         }
 
         public int GetMapData(float x, float y)
@@ -206,19 +236,6 @@ namespace Searching
             obj.name = $"Enemy_{enemies[x, y].Name} {x}, {y}";
         }
 
-        public void PlaceDemonWall(int x, int y)
-        {
-            int r = Random.Range(0, demonWallsPrefab.Length);
-            GameObject obj = Instantiate(demonWallsPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-            obj.transform.parent = wallParent;
-            mapdata[x, y] = demonWall;
-            walls[x, y] = obj.GetComponent<OOPWall>();
-            walls[x, y].positionX = x;
-            walls[x, y].positionY = y;
-            walls[x, y].mapGenerator = this;
-            obj.name = $"DemonWall_{walls[x, y].Name} {x}, {y}";
-        }
-
         public void PlaceFireStorm(int x, int y)
         {
             int r = Random.Range(0, fireStormPrefab.Length);
@@ -257,7 +274,7 @@ namespace Searching
             }
             foreach (var enemy in list)
             {
-                enemy.MoveToPlayer();
+                enemy.CreatePath();
             }
         }
     }
