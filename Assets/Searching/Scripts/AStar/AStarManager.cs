@@ -18,6 +18,7 @@ public class AStarManager : MonoBehaviour
         foreach (Node n in FindObjectsOfType<Node>())
         {
             n.gScore = float.MaxValue;
+            n.previous = null;
         }
 
         start.gScore = 0;
@@ -26,8 +27,7 @@ public class AStarManager : MonoBehaviour
 
         while (openSet.Count > 0)
         {
-            int lowestF = default;
-
+            int lowestF = 0;
             for (int i = 1; i < openSet.Count; i++)
             {
                 if (openSet[i].FScore() < openSet[lowestF].FScore())
@@ -41,47 +41,58 @@ public class AStarManager : MonoBehaviour
 
             if (currentNode == end)
             {
-                List<Node> path = new List<Node>();
-
-                path.Insert(0, end);
-
-                while (currentNode != start)
-                {
-                    currentNode = currentNode.cameFrom;
-                    path.Add(currentNode);
-                }
-
-                path.Reverse();
-                return path;
+                return ReconstructPath(start, end);
             }
 
-            foreach (Node connectedNode in currentNode.connections)
+            foreach (Node neighbor in currentNode.connections)
             {
-                float heldGScore = currentNode.gScore +
-                                   Vector2.Distance(currentNode.transform.position, connectedNode.transform.position);
-
-                if (heldGScore < connectedNode.gScore)
+                /*if (!neighbor.isWalkable)
                 {
-                    connectedNode.cameFrom = currentNode;
-                    connectedNode.gScore = heldGScore;
-                    connectedNode.hScore = Vector2.Distance(connectedNode.transform.position, end.transform.position);
+                    continue;
+                }*/
 
-                    if (!openSet.Contains(connectedNode))
+                float tentativeGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, neighbor.transform.position);
+                if (tentativeGScore < neighbor.gScore)
+                {
+                    neighbor.gScore = tentativeGScore;
+                    neighbor.hScore = Vector2.Distance(neighbor.transform.position, end.transform.position);
+                    neighbor.previous = currentNode;
+
+                    if (!openSet.Contains(neighbor))
                     {
-                        openSet.Add(connectedNode);
+                        openSet.Add(neighbor);
                     }
                 }
             }
         }
 
-        return null;
+        return null; 
     }
+
+
+
+    private List<Node> ReconstructPath(Node start, Node end)
+    {
+        List<Node> path = new List<Node>();
+        Node currentNode = end;
+        
+        while (currentNode != start)
+        {
+            path.Add(currentNode);
+            currentNode = currentNode.previous;
+        }
+
+        path.Add(start);
+        path.Reverse();
+
+        return path;
+    }
+
 
     public Node FindNearestNode(Vector2 pos)
     {
         Node foundNode = null;
         float minDistance = float.MaxValue;
-
         foreach (Node node in FindObjectsOfType<Node>())
         {
             float currentDistance = Vector2.Distance(pos, node.transform.position);
@@ -92,7 +103,6 @@ public class AStarManager : MonoBehaviour
                 foundNode = node;
             }
         }
-
         return foundNode;
     }
 
@@ -112,6 +122,26 @@ public class AStarManager : MonoBehaviour
         }
 
         return foundNode;
+    }
+    public Node FindNearestWalkableNode(Vector2 pos)
+    {
+        Node nearestWalkableNode = null;
+        float minDistance = float.MaxValue;
+        
+        foreach (Node node in FindObjectsOfType<Node>())
+        {
+            if (node.isWalkable)
+            {
+                float currentDistance = Vector2.Distance(pos, node.transform.position);
+                if (currentDistance < minDistance)
+                {
+                    minDistance = currentDistance;
+                    nearestWalkableNode = node;
+                }
+            }
+        }
+
+        return nearestWalkableNode;
     }
 
     public Node[] AllNodes()

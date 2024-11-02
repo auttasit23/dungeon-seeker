@@ -33,6 +33,12 @@ namespace Searching
         private void Update()
         {
             MoveAlongPath();
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                path.Clear();
+                GeneratePathToPlayer();
+            }
         }
 
         public override void Hit()
@@ -57,11 +63,12 @@ namespace Searching
         }
         public void CreatePath()
         {
-            if (path.Count == 0)
+            if (path.Count == 0 || path.Count == null)
             {
                 GeneratePathToPlayer();
             }
-            if (path.Count > 0)
+            
+            if (path.Count > 0 || path == null)
             {
                 Node nextNode = path[0];
                 currentNode = nextNode;
@@ -73,7 +80,7 @@ namespace Searching
         
         private void MoveAlongPath()
         {
-            if (!shouldMove)
+            if (!shouldMove || path == null || currentPathIndex >= path.Count)
                 return;
 
             Node nextNode = path[currentPathIndex];
@@ -84,6 +91,7 @@ namespace Searching
                 shouldMove = false;
             }
         }
+
 
         private void GeneratePathToPlayer()
         {

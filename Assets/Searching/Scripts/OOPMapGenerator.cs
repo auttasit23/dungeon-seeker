@@ -208,7 +208,28 @@ namespace Searching
             potions[x, y].positionY = y;
             potions[x, y].mapGenerator = this;
             obj.name = $"Item_{potions[x, y].Name} {x}, {y}";
+            
+            Vector2 position = new Vector2(x, y);
+            if (nodes.ContainsKey(position))
+            {
+                Node node = nodes[position];
+                if (node != null)
+                {
+                    node.isWalkable = false; // Mark the node as unwalkable
+                }
+            }
+            /*Vector2 position = new Vector2(x, y);
+            if (nodes.ContainsKey(position))
+            {
+                Node node = nodes[position];
+                if (node != null)
+                {
+                    Destroy(node);
+                    nodes.Remove(position);
+                }
+            }*/
         }
+
 
         public void PlaceKey(int x, int y)
         {
