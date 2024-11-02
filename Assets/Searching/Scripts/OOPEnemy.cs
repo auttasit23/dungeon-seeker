@@ -9,10 +9,12 @@ namespace Searching
     {
         public Transform player;
         public GameObject playerObject;
-        public float moveInterval = 1.0f;
 
         public Node currentNode;
         public List<Node> path = new List<Node>();
+        
+        private int currentPathIndex = 0;
+        private bool shouldMove = false;
 
         public void Start()
         {
@@ -23,6 +25,11 @@ namespace Searching
             }
             GetRemainEnergy();
             GeneratePathToPlayer();
+        }
+
+        private void Update()
+        {
+            MoveAlongPath();
         }
 
         public override void Hit()
@@ -51,24 +58,60 @@ namespace Searching
             {
                 GeneratePathToPlayer();
             }
-
             if (path.Count > 0)
             {
-                int x = 0;
-                transform.position = Vector3.MoveTowards(transform.position, new Vector3(path[x].transform.position.x, path[x].transform.position.y, -2), 1f);
-
-                if (Vector2.Distance(transform.position, path[x].transform.position) < 0.1f)
-                {
-                    currentNode = path[x];
-                    path.RemoveAt(x);
-                }
+                Node nextNode = path[0];
+                currentNode = nextNode;
+                path.RemoveAt(0);
+                    
+                MoveToPosition((int)nextNode.transform.position.x, (int)nextNode.transform.position.y);
             }
         }
-        public void GeneratePathToPlayer()
+        
+        private void MoveAlongPath()
         {
-            Node targetNode = AStarManager.instance.FindNearestNode(playerObject.transform.position);
-            currentNode = targetNode;
-            path = AStarManager.instance.GeneratePath(currentNode, targetNode);
+            if (!shouldMove)
+                return;
+
+            Node nextNode = path[currentPathIndex];
+
+            if (Vector2.Distance(transform.position, nextNode.transform.position) < 0.1f)
+            {
+                currentPathIndex++;
+                shouldMove = false;
+            }
+        }
+
+        private void GeneratePathToPlayer()
+        {
+            Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+            Node endNode = AStarManager.instance.FindNearestNode(player.position);
+            path = AStarManager.instance.GeneratePath(startNode, endNode);
+            currentPathIndex = 0;
+    
+            MoveOneStepTowardsPlayer();
+        }
+
+        
+        public void MoveOneStepTowardsPlayer()
+        {
+            if (currentPathIndex >= path.Count)
+            {
+                GeneratePathToPlayer();
+            }
+            shouldMove = true;
+        }
+
+        private void MoveToPosition(int x, int y)
+        {
+            mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
+            mapGenerator.enemies[positionX, positionY] = null;
+            positionX = x;
+            positionY = y;
+            mapGenerator.mapdata[positionX, positionY] = mapGenerator.enemy;
+            mapGenerator.enemies[positionX, positionY] = this;
+
+            transform.position = new Vector3(positionX, positionY, 0);
         }
     }
 }

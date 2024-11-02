@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 464573930478378977}
   m_Layer: 8
   m_Name: Enemy1
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -150,6 +150,7 @@ MonoBehaviour:
   energy: 4
   AttackPoint: 0
   player: {fileID: 0}
+  playerObject: {fileID: 0}
   moveInterval: 1
-  obstacleTags:
-  - Obstacle
+  currentNode: {fileID: 0}
+  path: []
