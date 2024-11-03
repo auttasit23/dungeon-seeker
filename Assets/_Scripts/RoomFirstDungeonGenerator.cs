@@ -27,17 +27,6 @@ public class RoomFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     {
         CreateRooms();
     }
-    
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            tilemapVisualizer.Clear();
-            ClearNodes();
-            CreateRooms();
-        }
-    }
 
     public void CreateRooms()
     {

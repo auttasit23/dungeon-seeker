@@ -108,6 +108,37 @@ namespace Searching
             /*mapdata[exitPosX, exitPosY] = exit;*/
         }
         
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                StartCoroutine(ResetMap());
+            }
+        }
+        
+        public IEnumerator ResetMap()
+        {
+            tilemapVisualizer.Clear();
+            ClearNodes();
+            CreateRooms();
+            yield return new WaitForSeconds(0.3f);
+            //ย้ายผู้เล่นไปจุดเริ่มต้น
+            Vector3 startPosition = FindLowestNodePosition();
+            if (startPosition != Vector3.negativeInfinity)
+            {
+                player.mapGenerator = this;
+                player.positionX = startPosition.x;
+                player.positionY = startPosition.y;
+                player.transform.position = new Vector3(startPosition.x, startPosition.y, -0.1f);
+            }
+                
+            //ย้ายทางออก
+            Vector3 exitPosition = FindHighestNodePosition();
+            int exitPosX = Mathf.RoundToInt(exitPosition.x);
+            int exitPosY = Mathf.RoundToInt(exitPosition.y);
+            Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
+        }
+
         public Vector3 FindLowestNodePosition()
         {
             if (nodesParent == null)
