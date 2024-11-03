@@ -11,6 +11,7 @@ public class Node : MonoBehaviour
 
     public float gScore;
     public float hScore;
+    public bool drawGizmos = true;
 
     public float FScore()
     {
@@ -19,7 +20,12 @@ public class Node : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if(connections.Count > 0)
+        if (!drawGizmos) return;
+        if (this == null || gameObject == null)
+        {
+            return;
+        }
+        if (connections.Count > 0)
         {
             Gizmos.color = Color.blue;
             for(int i = 0; i < connections.Count; i++)

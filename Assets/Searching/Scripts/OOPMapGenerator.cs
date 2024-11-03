@@ -22,11 +22,9 @@ namespace Searching
         [Header("Set Prefab")]
         public GameObject[] floorsPrefab;
         public GameObject[] wallsPrefab;
-        public GameObject[] demonWallsPrefab;
         public GameObject[] itemsPrefab;
         public GameObject[] keysPrefab;
         public GameObject[] enemiesPrefab;
-        public GameObject[] fireStormPrefab;
 
         [Header("Set Transform")]
         public Transform floorParent;
@@ -38,7 +36,6 @@ namespace Searching
         public int obsatcleCount;
         public int itemPotionCount;
         public int itemKeyCount;
-        public int itemFireStormCount;
         public int enemyCount;
 
         public int[,] mapdata;
@@ -149,19 +146,6 @@ namespace Searching
                 }
             }
 
-            fireStorms = new OOPFireStormItem[X, Y];
-            count = 0;
-            while (count < itemFireStormCount)
-            {
-                int x = Random.Range(0, X);
-                int y = Random.Range(0, Y);
-                if (mapdata[x, y] == empty)
-                {
-                    PlaceFireStorm(x, y);
-                    count++;
-                }
-            }
-
             mapdata[X - 1, Y - 1] = exit;
             Exit.transform.position = new Vector3(X - 1, Y - 1, 0);
         }
@@ -190,6 +174,7 @@ namespace Searching
                 }
             }
         }
+        
 
         public int GetMapData(float x, float y)
         {
@@ -256,19 +241,7 @@ namespace Searching
             enemies[x, y].mapGenerator = this;
             obj.name = $"Enemy_{enemies[x, y].Name} {x}, {y}";
         }
-
-        public void PlaceFireStorm(int x, int y)
-        {
-            int r = Random.Range(0, fireStormPrefab.Length);
-            GameObject obj = Instantiate(fireStormPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-            obj.transform.parent = wallParent;
-            mapdata[x, y] = fireStorm;
-            fireStorms[x, y] = obj.GetComponent<OOPFireStormItem>();
-            fireStorms[x, y].positionX = x;
-            fireStorms[x, y].positionY = y;
-            fireStorms[x, y].mapGenerator = this;
-            obj.name = $"FireStorm_{fireStorms[x, y].Name} {x}, {y}";
-        }
+        
 
         public OOPEnemy[] GetEnemies()
         {
