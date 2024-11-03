@@ -8,7 +8,7 @@ namespace Searching
 
     public class OOPWall : Identity
     {
-        public int Damage;
+        /*public int Damage;
         public bool IsIceWall;
 
         private void Start()
@@ -31,6 +31,6 @@ namespace Searching
             }
             mapGenerator.mapdata[positionX, positionY] = 0;
             Destroy(gameObject);
-        }
+        }*/
     }
 }

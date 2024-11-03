@@ -32,7 +32,7 @@ namespace Searching
             }
 
 
-            mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
+            /*mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;*/
             Destroy(gameObject);
         }
     }

@@ -32,18 +32,36 @@ namespace Searching
                 isFreeze = false;
                 return;
             }
-            int toX = (int)(positionX + direction.x);
-            int toY = (int)(positionY + direction.y);
-            int fromX = positionX;
-            int fromY = positionY;
-
-            if (HasPlacement(toX, toY))
+          
+            float toX = positionX + direction.x;
+            float toY = positionY + direction.y;
+            Vector2 nextPosition = new Vector2(toX, toY);
+            
+           
+            Node[] nodes = FindObjectsOfType<Node>();
+            bool hasNodeAtNextPosition = false;
+    
+            foreach (Node node in nodes)
             {
-                if (IsDemonWalls(toX, toY))
+                if (Vector2.Distance(node.transform.position, nextPosition) < 0.1f)
                 {
-                    mapGenerator.walls[toX, toY].Hit();
+                    hasNodeAtNextPosition = true;
+                    break;
                 }
-                else if (IsPotion(toX, toY))
+            }
+            
+            if (!hasNodeAtNextPosition)
+            {
+                return;
+            }
+
+
+            float fromX = positionX;
+            float fromY = positionY;
+
+            /*if (HasPlacement(toX, toY))
+            {
+                if (IsPotion(toX, toY))
                 {
                     mapGenerator.potions[toX, toY].Hit();
                     positionX = toX;
@@ -67,12 +85,6 @@ namespace Searching
                     positionX = toX;
                     positionY = toY;
                 }
-                else if (IsFireStorm(toX, toY))
-                {
-                    mapGenerator.fireStorms[toX, toY].Hit();
-                    positionX = toX;
-                    positionY = toY;
-                }
                 else if (IsEnemy(toX, toY))
                 {
                     mapGenerator.enemies[toX, toY].Hit();
@@ -83,7 +95,10 @@ namespace Searching
                 positionX = toX;
                 positionY = toY;
                 TakeDamage(1);
-            }
+            }*/
+            positionX = toX;
+            positionY = toY;
+            TakeDamage(1);
             
             Vector3 targetPosition = new Vector3(positionX, positionY, 0);
             StartCoroutine(MoveSmoothly(targetPosition));
@@ -92,8 +107,8 @@ namespace Searching
             {
                 if (fromX != positionX || fromY != positionY)
                 {
-                    mapGenerator.mapdata[fromX, fromY] = mapGenerator.empty;
-                    mapGenerator.mapdata[positionX, positionY] = mapGenerator.playerBlock;
+                    /*mapGenerator.mapdata[fromX, fromY] = mapGenerator.empty;
+                    mapGenerator.mapdata[positionX, positionY] = mapGenerator.playerBlock;*/
                     mapGenerator.MoveEnemies();
                 }
             }
@@ -118,15 +133,10 @@ namespace Searching
             isMoving = false;
         }
         // hasPlacement คืนค่า true ถ้ามีการวางอะไรไว้บน map ที่ตำแหน่ง x,y
-        public bool HasPlacement(int x, int y)
+        /*public bool HasPlacement(int x, int y)
         {
             int mapData = mapGenerator.GetMapData(x, y);
             return mapData != mapGenerator.empty;
-        }
-        public bool IsDemonWalls(int x, int y)
-        {
-            int mapData = mapGenerator.GetMapData(x, y);
-            return mapData == mapGenerator.demonWall;
         }
         public bool IsPotion(int x, int y)
         {
@@ -137,11 +147,6 @@ namespace Searching
         {
             int mapData = mapGenerator.GetMapData(x, y);
             return mapData == mapGenerator.potion;
-        }
-        public bool IsFireStorm(int x, int y)
-        {
-            int mapData = mapGenerator.GetMapData(x, y);
-            return mapData == mapGenerator.fireStorm;
         }
         public bool IsKey(int x, int y)
         {
@@ -158,6 +163,7 @@ namespace Searching
             int mapData = mapGenerator.GetMapData(x, y);
             return mapData == mapGenerator.exit;
         }
+        */
 
         public virtual void TakeDamage(int Damage)
         {

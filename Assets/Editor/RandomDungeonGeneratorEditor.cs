@@ -20,25 +20,10 @@ public class RandomDungeonGeneratorEditor : Editor
         {
             generator.GenerateDungeon();
         }
-        if (GUILayout.Button("Clear Node"))
+        
+        if(GUILayout.Button("Clear Tile"))
         {
-            GameObject parent = GameObject.Find("NodeParent");
-
-            if (parent != null)
-            {
-                for (int i = parent.transform.childCount - 1; i >= 0; i--)
-                {
-                    if (parent.transform.GetChild(i).gameObject != null)
-                    {
-                        DestroyImmediate(parent.transform.GetChild(i).gameObject);
-                    }
-                }
-                Debug.Log("All child nodes cleared.");
-            }
-            else
-            {
-                Debug.LogWarning("NodeParent not found!");
-            }
+            generator.ClearTile();
         }
     }
 }

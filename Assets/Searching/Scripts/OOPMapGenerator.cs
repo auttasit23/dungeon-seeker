@@ -6,12 +6,8 @@ using UnityEngine.Assertions.Must;
 namespace Searching
 {
 
-    public class OOPMapGenerator : MonoBehaviour
+    public class OOPMapGenerator : RoomFirstDungeonGenerator
     {
-        [Header("Set MapGenerator")]
-        public int X;
-        public int Y;
-
         [Header("Set Player")]
         public OOPPlayer player;
         public Vector2Int playerStartPos;
@@ -20,29 +16,22 @@ namespace Searching
         public OOPExit Exit;
 
         [Header("Set Prefab")]
-        public GameObject[] floorsPrefab;
-        public GameObject[] wallsPrefab;
         public GameObject[] itemsPrefab;
         public GameObject[] keysPrefab;
         public GameObject[] enemiesPrefab;
 
         [Header("Set Transform")]
-        public Transform floorParent;
-        public Transform wallParent;
-        public Transform itemPotionParent;
+        public Transform itemParent;
         public Transform enemyParent;
 
         [Header("Set object Count")]
-        public int obsatcleCount;
-        public int itemPotionCount;
+        public int itemCount;
         public int itemKeyCount;
         public int enemyCount;
 
         public int[,] mapdata;
-
-        public OOPWall[,] walls;
+        
         public OOPItemPotion[,] potions;
-        public OOPFireStormItem[,] fireStorms;
         public OOPItemKey[,] keys;
         public OOPEnemy[,] enemies;
 
@@ -50,65 +39,31 @@ namespace Searching
         [Header("Block Types")]
         public int playerBlock = 99;
         public int empty = 0;
-        public int demonWall = 1;
         public int potion = 2;
-        public int bonuesPotion = 3;
         public int exit = 4;
         public int key = 5;
         public int enemy = 6;
-        public int fireStorm = 7;
         Dictionary<Vector2, Node> nodes = new Dictionary<Vector2, Node>();
 
         // Start is called before the first frame update
+
         void Start()
         {
-            mapdata = new int[X, Y];
-            for (int x = -1; x < X + 1; x++)
+            CreateRooms();
+            
+            Vector3 startPosition = FindLowestNodePosition();
+            if (startPosition != Vector3.negativeInfinity)
             {
-                for (int y = -1; y < Y + 1; y++)
-                {
-                    if (x == -1 || x == X || y == -1 || y == Y)
-                    {
-                        int r = Random.Range(0, wallsPrefab.Length);
-                        GameObject obj = Instantiate(wallsPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-                        obj.transform.parent = wallParent;
-                        obj.name = "Wall_" + x + ", " + y;
-                    }
-                    else
-                    {
-                        int r = Random.Range(0, floorsPrefab.Length);
-                        GameObject obj = Instantiate(floorsPrefab[r], new Vector3(x, y, 1), Quaternion.identity);
-                        obj.transform.parent = floorParent;
-                        obj.name = "floor_" + x + ", " + y;
-                        
-                        Node node = obj.AddComponent<Node>();
-                        node.connections = new List<Node>();
-                        nodes[new Vector2(x, y)] = node;
-                    }
-                }
+                player.mapGenerator = this;
+                player.positionX = startPosition.x;
+                player.positionY = startPosition.y;
+                player.transform.position = new Vector3(startPosition.x, startPosition.y, -0.1f);
             }
-            ConnectNodes();
-            player.mapGenerator = this;
-            player.positionX = playerStartPos.x;
-            player.positionY = playerStartPos.y;
-            player.transform.position = new Vector3(playerStartPos.x, playerStartPos.y, -0.1f);
-            mapdata[playerStartPos.x, playerStartPos.y] = playerBlock;
 
-            walls = new OOPWall[X, Y];
             int count = 0;
-            while (count < obsatcleCount)
-            {
-                int x = Random.Range(0, X);
-                int y = Random.Range(0, Y);
-                if (mapdata[x, y] == 0)
-                {
-                    count++;
-                }
-            }
-
-            potions = new OOPItemPotion[X, Y];
+            /*potions = new OOPItemPotion[X, Y];
             count = 0;
-            while (count < itemPotionCount)
+            while (count < itemCount)
             {
                 int x = Random.Range(0, X);
                 int y = Random.Range(0, Y);
@@ -144,49 +99,99 @@ namespace Searching
                     AStarManager.instance.FindNearestNode(player.transform.position);
                     count++;
                 }
-            }
-
-            mapdata[X - 1, Y - 1] = exit;
-            Exit.transform.position = new Vector3(X - 1, Y - 1, 0);
+            }*/
+            
+            Vector3 exitPosition = FindHighestNodePosition();
+            int exitPosX = Mathf.RoundToInt(exitPosition.x);
+            int exitPosY = Mathf.RoundToInt(exitPosition.y);
+            Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
+            /*mapdata[exitPosX, exitPosY] = exit;*/
         }
         
-        void ConnectNodes()
+        public Vector3 FindLowestNodePosition()
         {
-            foreach (var kvp in nodes)
+            if (nodesParent == null)
             {
-                Vector2 position = kvp.Key;
-                Node node = kvp.Value;
-                
-                List<Vector2> neighbors = new List<Vector2>()
+                return Vector3.negativeInfinity;
+            }
+
+            Transform lowestNode = null;
+            int lowestX = int.MaxValue;
+            int lowestY = int.MaxValue;
+
+            foreach (Transform child in nodesParent)
+            {
+                if (child.name.StartsWith("Node_"))
                 {
-                    position + Vector2.up,
-                    position + Vector2.down,
-                    position + Vector2.left,
-                    position + Vector2.right
-                };
-                
-                foreach (Vector2 neighborPos in neighbors)
-                {
-                    if (nodes.TryGetValue(neighborPos, out Node neighborNode))
+                    string[] parts = child.name.Split('_');
+                    if (parts.Length == 3 && int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
                     {
-                        node.connections.Add(neighborNode);
+                        // Compare based on X and Y values
+                        if (x < lowestX || (x == lowestX && y < lowestY))
+                        {
+                            lowestX = x;
+                            lowestY = y;
+                            lowestNode = child;
+                        }
                     }
                 }
             }
+
+            if (lowestNode != null)
+            {
+                return lowestNode.position;
+            }
+            else
+            {
+                return Vector3.negativeInfinity;
+            }
         }
         
-
-        public int GetMapData(float x, float y)
+        public Vector3 FindHighestNodePosition()
         {
-            if (x >= X || x < 0 || y >= Y || y < 0) return -1;
-            return mapdata[(int)x, (int)y];
+            if (nodesParent == null)
+            {
+                return Vector3.negativeInfinity;
+            }
+
+            Transform highestNode = null;
+            int highestX = int.MinValue;
+            int highestY = int.MinValue;
+
+            foreach (Transform child in nodesParent)
+            {
+                if (child.name.StartsWith("Node_"))
+                {
+                    string[] parts = child.name.Split('_');
+                    if (parts.Length == 3 && int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
+                    {
+                        if (x > highestX || (x == highestX && y > highestY))
+                        {
+                            highestX = x;
+                            highestY = y;
+                            highestNode = child;
+                        }
+                    }
+                }
+            }
+
+            if (highestNode != null)
+            {
+                return highestNode.position;
+            }
+            else
+            {
+                return Vector3.negativeInfinity;
+            }
         }
+        
+ 
 
         public void PlaceItem(int x, int y)
         {
             int r = Random.Range(0, itemsPrefab.Length);
             GameObject obj = Instantiate(itemsPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-            obj.transform.parent = itemPotionParent;
+            obj.transform.parent = itemParent;
             mapdata[x, y] = potion;
             potions[x, y] = obj.GetComponent<OOPItemPotion>();
             potions[x, y].positionX = x;
@@ -194,7 +199,7 @@ namespace Searching
             potions[x, y].mapGenerator = this;
             obj.name = $"Item_{potions[x, y].Name} {x}, {y}";
             
-            Vector2 position = new Vector2(x, y);
+            /*Vector2 position = new Vector2(x, y);
             if (nodes.ContainsKey(position))
             {
                 Node node = nodes[position];
@@ -202,7 +207,7 @@ namespace Searching
                 {
                     node.isWalkable = false; // Mark the node as unwalkable
                 }
-            }
+            }*/
             /*Vector2 position = new Vector2(x, y);
             if (nodes.ContainsKey(position))
             {
@@ -220,7 +225,7 @@ namespace Searching
         {
             int r = Random.Range(0, keysPrefab.Length);
             GameObject obj = Instantiate(keysPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-            obj.transform.parent = itemPotionParent;
+            obj.transform.parent = itemParent;
             mapdata[x, y] = key;
             keys[x, y] = obj.GetComponent<OOPItemKey>();
             keys[x, y].positionX = x;
@@ -233,7 +238,7 @@ namespace Searching
         {
             int r = Random.Range(0, enemiesPrefab.Length);
             GameObject obj = Instantiate(enemiesPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-            obj.transform.parent = itemPotionParent;
+            obj.transform.parent = enemyParent;
             mapdata[x, y] = enemy;
             enemies[x, y] = obj.GetComponent<OOPEnemy>();
             enemies[x, y].positionX = x;
@@ -258,6 +263,7 @@ namespace Searching
 
         public void MoveEnemies()
         {
+            if (enemies == null) return;
             List<OOPEnemy> list = new List<OOPEnemy>();
             foreach (var enemy in enemies)
             {

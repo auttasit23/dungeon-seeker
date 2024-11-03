@@ -55,11 +55,11 @@ namespace Searching
         protected override void CheckDead()
         {
             base.CheckDead();
-            if (energy <= 0)
+            /*if (energy <= 0)
             {
                 mapGenerator.enemies[positionX, positionY] = null;
                 mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
-            }
+            }*/
         }
         public void CreatePath()
         {
@@ -116,7 +116,7 @@ namespace Searching
 
         private void MoveToPosition(int x, int y)
         {
-            if (!HasPlacement(x, y))
+            /*if (!HasPlacement(x, y))
             {
                 mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
                 mapGenerator.enemies[positionX, positionY] = null;
@@ -127,7 +127,11 @@ namespace Searching
                 
                 Vector3 targetPosition = new Vector3(positionX, positionY, 0);
                 StartCoroutine(MoveSmoothly(targetPosition));
-            }
+            }*/
+            positionX = x;
+            positionY = y;
+            Vector3 targetPosition = new Vector3(positionX, positionY, 0);
+            StartCoroutine(MoveSmoothly(targetPosition));
         }
     }
 }

@@ -9,8 +9,8 @@ namespace Searching
     {
         [Header("Identity")]
         public string Name;
-        public int positionX;
-        public int positionY;
+        public float positionX;
+        public float positionY;
 
         public OOPMapGenerator mapGenerator;
 
