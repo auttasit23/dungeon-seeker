@@ -14,6 +14,11 @@ namespace Searching
         {
             PrintInfo();
             GetRemainEnergy();
+            mapScript = FindObjectOfType<OOPMapGenerator>();
+            if (mapScript == null)
+            {
+                Debug.LogError("OOPMapGenerator not found in the scene!");
+            }
         }
 
         public void Update()
@@ -50,7 +55,7 @@ namespace Searching
             }
         }
 
-        public void UseFireStorm()
+        /*public void UseFireStorm()
         {
             if (inventory.numberOfItem("FireStorm") > 0)
             {
@@ -70,9 +75,9 @@ namespace Searching
             {
                 Debug.Log("No FireStorm in inventory");
             }
-        }
+        }*/
 
-        public OOPEnemy[] SortEnemiesByRemainningEnergy1()
+        /*public OOPEnemy[] SortEnemiesByRemainningEnergy1()
         {
             // do selection sort of enemy's energy
             var enemies = mapGenerator.GetEnemies();
@@ -99,6 +104,7 @@ namespace Searching
             Array.Sort(enemies, (a, b) => a.energy.CompareTo(b.energy));
             return enemies;
         }
+        */
 
     }
 

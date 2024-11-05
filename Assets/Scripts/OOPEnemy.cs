@@ -23,6 +23,11 @@ namespace Searching
             {
                 player = playerObject.transform;
             }
+            mapScript = FindObjectOfType<OOPMapGenerator>();
+            if (mapScript == null)
+            {
+                Debug.LogError("OOPMapGenerator not found in the scene!");
+            }
             GetRemainEnergy();
             GeneratePathToPlayer();
             
@@ -131,6 +136,8 @@ namespace Searching
             positionX = x;
             positionY = y;
             Vector3 targetPosition = new Vector3(positionX, positionY, 0);
+            SetNode(targetPosition, "enemy");
+            SetNode(transform.position, "empty");
             StartCoroutine(MoveSmoothly(targetPosition));
         }
     }

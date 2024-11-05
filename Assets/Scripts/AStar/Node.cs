@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
+    public string onMe = "empty";
+    
     public Node cameFrom;
     public List<Node> connections;
     public bool isWalkable = true;

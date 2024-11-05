@@ -28,8 +28,7 @@ namespace Searching
         public int itemCount;
         public int itemKeyCount;
         public int enemyCount;
-
-        public Dictionary<Vector2, float> mapdata = new Dictionary<Vector2, float>();
+        
         
         public OOPItemPotion[,] potions;
         public OOPItemKey[,] keys;
@@ -55,7 +54,7 @@ namespace Searching
             Vector3 startPosition = FindLowestNodePosition();
             if (startPosition != Vector3.negativeInfinity)
             {
-                player.mapGenerator = this;
+                SetNode(startPosition, "player");
                 player.positionX = startPosition.x;
                 player.positionY = startPosition.y;
                 player.transform.position = new Vector3(startPosition.x, startPosition.y, -0.1f);
@@ -103,6 +102,7 @@ namespace Searching
             }*/
             
             Vector3 exitPosition = FindHighestNodePosition();
+            SetNode(exitPosition, "exit");
             Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
             /*mapdata[exitPosX, exitPosY] = exit;*/
         }
@@ -120,12 +120,24 @@ namespace Searching
             tilemapVisualizer.Clear();
             ClearNodes();
             CreateRooms();
+            RemoveAllEnemies();
+            GameObject enemy = GameObject.Find("Enemy");
+
+            if (enemy != null)
+            {
+                foreach (Transform child in enemy.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
             yield return new WaitForSeconds(0.3f);
+            Vector3 randomPos = RandomNode();
+            PlaceEnemy(randomPos.x,randomPos.y);
             //ย้ายผู้เล่นไปจุดเริ่มต้น
             Vector3 startPosition = FindLowestNodePosition();
             if (startPosition != Vector3.negativeInfinity)
             {
-                player.mapGenerator = this;
+                SetNode(startPosition, "player");
                 player.positionX = startPosition.x;
                 player.positionY = startPosition.y;
                 player.transform.position = new Vector3(startPosition.x, startPosition.y, -0.1f);
@@ -133,6 +145,7 @@ namespace Searching
                 
             //ย้ายทางออก
             Vector3 exitPosition = FindHighestNodePosition();
+            SetNode(exitPosition, "exit");
             int exitPosX = Mathf.RoundToInt(exitPosition.x);
             int exitPosY = Mathf.RoundToInt(exitPosition.y);
             Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
@@ -156,7 +169,6 @@ namespace Searching
                     string[] parts = child.name.Split('_');
                     if (parts.Length == 3 && int.TryParse(parts[1], out int x) && int.TryParse(parts[2], out int y))
                     {
-                        // Compare based on X and Y values
                         if (x < lowestX || (x == lowestX && y < lowestY))
                         {
                             lowestX = x;
@@ -259,10 +271,26 @@ namespace Searching
                 return Vector3.negativeInfinity;
             }
         }
+        
+        public GameObject GetNode(Vector3 position)
+        {
+            if (nodesParent == null)
+            {
+                return null;
+            }
+
+            foreach (Transform child in nodesParent)
+            {
+                if (child.name.StartsWith("Node_") && child.position == position)
+                {
+                    return child.gameObject;
+                }
+            }
+
+            return null;
+        }
 
 
-
- 
 
         public void PlaceItem(int x, int y)
         {
@@ -270,7 +298,6 @@ namespace Searching
             GameObject obj = Instantiate(itemsPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
             obj.transform.parent = itemParent;
             Vector2 position = new Vector2(x, y);
-            mapdata[position] = potion;
             potions[x, y] = obj.GetComponent<OOPItemPotion>();
             potions[x, y].positionX = x;
             potions[x, y].positionY = y;
@@ -305,7 +332,6 @@ namespace Searching
             GameObject obj = Instantiate(keysPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
             obj.transform.parent = itemParent;
             Vector2 position = new Vector2(x, y);
-            mapdata[position] = key;
             keys[x, y] = obj.GetComponent<OOPItemKey>();
             keys[x, y].positionX = x;
             keys[x, y].positionY = y;
@@ -316,55 +342,57 @@ namespace Searching
         public void PlaceEnemy(float x, float y)
         {
             int r = Random.Range(0, enemiesPrefab.Length);
-            GameObject obj = Instantiate(enemiesPrefab[r], new Vector3(x, y, -1), Quaternion.identity);
+            Vector3 position = new Vector3(x, y, -1);
+            SetNode(position, "enemy");
+            GameObject obj = Instantiate(enemiesPrefab[r], position, Quaternion.identity);
             obj.transform.parent = enemyParent;
             SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
             {
                 spriteRenderer.sortingOrder = 1;
             }
-            Vector2 position = new Vector2(x, y);
-
-            mapdata[position] = enemy;
             OOPEnemy enemyComponent = obj.GetComponent<OOPEnemy>();
-            enemies[position] = enemyComponent;
-            enemyComponent.positionX = x;
-            enemyComponent.positionY = y;
-            enemyComponent.mapGenerator = this;
-
             obj.name = $"Enemy_{enemyComponent.Name} {x}, {y}";
+            
+            Vector2 key = new Vector2(x, y);
+            enemies[key] = enemyComponent;
         }
-
-
-
         
-        public OOPEnemy[] GetEnemies()
+        public void SetNode(Vector3 position, string name)
         {
-            List<OOPEnemy> list = new List<OOPEnemy>();
-            foreach (var enemy in enemies.Values)
+            GameObject nodeObject = GetNode(position);
+    
+            if (nodeObject != null)
             {
-                if (enemy != null)
+                Node nodeS = nodeObject.GetComponent<Node>();
+        
+                if (nodeS != null)
                 {
-                    list.Add(enemy);
+                    nodeS.onMe = name;
                 }
             }
-            return list.ToArray();
         }
+        
         public void MoveEnemies()
         {
-            if (enemies == null) return;
-            List<OOPEnemy> list = new List<OOPEnemy>();
-            foreach (var enemy in enemies.Values)
-            {
-                if (enemy != null)
-                {
-                    list.Add(enemy);
-                }
-            }
+            List<OOPEnemy> list = new List<OOPEnemy>(enemies.Values);
+
             foreach (var enemy in list)
             {
                 enemy.CreatePath();
             }
         }
+        
+        public void RemoveAllEnemies()
+        {
+            foreach (var enemy in enemies.Values)
+            {
+                Destroy(enemy.gameObject);
+            }
+            
+            enemies.Clear();
+        }
+
+
     }
 }

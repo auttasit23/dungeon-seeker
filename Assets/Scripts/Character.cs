@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -17,8 +18,12 @@ namespace Searching
         protected bool isAlive;
         protected bool isFreeze;
         private bool isMoving = false;
+        
+        public OOPMapGenerator mapScript;
+
 
         // Start is called before the first frame update
+
         protected void GetRemainEnergy()
         {
             Debug.Log(Name + " : " + energy);
@@ -58,57 +63,20 @@ namespace Searching
 
             float fromX = positionX;
             float fromY = positionY;
-
-            /*if (HasPlacement(toX, toY))
-            {
-                if (IsPotion(toX, toY))
-                {
-                    mapGenerator.potions[toX, toY].Hit();
-                    positionX = toX;
-                    positionY = toY;
-                }
-                else if (IsPotionBonus(toX, toY))
-                {
-                    mapGenerator.potions[toX, toY].Hit();
-                    positionX = toX;
-                    positionY = toY;
-                }
-                else if (IsExit(toX, toY))
-                {
-                    mapGenerator.Exit.Hit();
-                    positionX = toX;
-                    positionY = toY;
-                }
-                else if (IsKey(toX, toY))
-                {
-                    mapGenerator.keys[toX, toY].Hit();
-                    positionX = toX;
-                    positionY = toY;
-                }
-                else if (IsEnemy(toX, toY))
-                {
-                    mapGenerator.enemies[toX, toY].Hit();
-                }
-            }
-            else
-            {
-                positionX = toX;
-                positionY = toY;
-                TakeDamage(1);
-            }*/
+            
             positionX = toX;
             positionY = toY;
-            TakeDamage(1);
-            
             Vector3 targetPosition = new Vector3(positionX, positionY, 0);
+            Debug.Log(mapScript.GetNode(targetPosition));
+            SetNode(targetPosition, "player");
+            SetNode(transform.position, "empty");
             StartCoroutine(MoveSmoothly(targetPosition));
+            TakeDamage(1);
 
             if (this is OOPPlayer)
             {
                 if (fromX != positionX || fromY != positionY)
                 {
-                    /*mapGenerator.mapdata[fromX, fromY] = mapGenerator.empty;
-                    mapGenerator.mapdata[positionX, positionY] = mapGenerator.playerBlock;*/
                     mapGenerator.MoveEnemies();
                 }
             }
@@ -164,7 +132,7 @@ namespace Searching
             return mapData == mapGenerator.exit;
         }
         */
-
+        
         public virtual void TakeDamage(int Damage)
         {
             energy -= Damage;
@@ -180,6 +148,22 @@ namespace Searching
             Debug.Log("you is Freeze");
             CheckDead();
         }
+
+        public void SetNode(Vector3 position, string name)
+        {
+            GameObject nodeObject = mapScript.GetNode(position);
+    
+            if (nodeObject != null)
+            {
+                Node nodeS = nodeObject.GetComponent<Node>();
+        
+                if (nodeS != null)
+                {
+                    nodeS.onMe = name;
+                }
+            }
+        }
+
 
 
         public void Heal(int healPoint)
