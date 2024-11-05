@@ -74,7 +74,7 @@ namespace Searching
                 currentNode = nextNode;
                 path.RemoveAt(0);
                     
-                MoveToPosition((int)nextNode.transform.position.x, (int)nextNode.transform.position.y);
+                MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
             }
         }
         
@@ -114,7 +114,7 @@ namespace Searching
             shouldMove = true;
         }
 
-        private void MoveToPosition(int x, int y)
+        private void MoveToPosition(float x, float y)
         {
             /*if (!HasPlacement(x, y))
             {
