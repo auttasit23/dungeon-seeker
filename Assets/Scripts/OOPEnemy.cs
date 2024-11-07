@@ -49,8 +49,8 @@ namespace Searching
 
         public override void Hit()
         {
-            mapGenerator.player.Attack(this);
-            this.Attack(mapGenerator.player);
+            SetNode(transform.position, "empty");
+            Destroy(gameObject);
         }
 
         public void Attack(OOPPlayer _player)

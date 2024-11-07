@@ -69,9 +69,24 @@ namespace Searching
             Vector3 currentPosition = new Vector3(fromX, fromY, 0);
             if (!HasPlacement(targetPosition))
             {
-                positionX -= direction.x;
-                positionY -= direction.y;
-                return;
+                if (IsEnemy(targetPosition))
+                {
+                    List<OOPEnemy> list = new List<OOPEnemy>(mapGenerator.enemies.Values);
+                    foreach (var enemy in list)
+                    {
+                        Debug.Log("1");
+                        enemy.Hit();
+                        positionX -= direction.x;
+                        positionY -= direction.y;
+                        return; 
+                    }
+                }
+                else
+                {
+                    positionX -= direction.x;
+                    positionY -= direction.y;
+                    return; 
+                }
             }
             else
             {
@@ -159,11 +174,6 @@ namespace Searching
         {
             int mapData = mapGenerator.GetMapData(x, y);
             return mapData == mapGenerator.key;
-        }
-        public bool IsEnemy(int x, int y)
-        {
-            int mapData = mapGenerator.GetMapData(x, y);
-            return mapData == mapGenerator.enemy;
         }
         public bool IsExit(int x, int y)
         {

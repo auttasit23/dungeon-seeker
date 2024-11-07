@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions.Must;
+using UnityEngine.SceneManagement;
 
 namespace Searching
 {
@@ -72,6 +73,10 @@ namespace Searching
             {
                 StartCoroutine(ResetMap());
             }
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                SceneManager.LoadScene("Map");
+            }
         }
         
         public IEnumerator ResetMap()
@@ -105,8 +110,6 @@ namespace Searching
             //ย้ายทางออก
             Vector3 exitPosition = FindHighestNodePosition();
             SetNode(exitPosition, "exit");
-            int exitPosX = Mathf.RoundToInt(exitPosition.x);
-            int exitPosY = Mathf.RoundToInt(exitPosition.y);
             Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
         }
 
@@ -344,14 +347,20 @@ namespace Searching
 
             foreach (var enemy in list)
             {
-                enemy.CreatePath();
+                if (enemy != null)
+                {
+                    enemy.CreatePath();
+                }
             }
         }
         public void RemoveAllEnemies()
         {
             foreach (var enemy in enemies.Values)
             {
-                Destroy(enemy.gameObject);
+                if (enemy != null)
+                {
+                    Destroy(enemy.gameObject);
+                }
             }
             
             enemies.Clear();
