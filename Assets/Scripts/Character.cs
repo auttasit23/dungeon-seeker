@@ -37,7 +37,7 @@ namespace Searching
                 isFreeze = false;
                 return;
             }
-          
+            
             float toX = positionX + direction.x;
             float toY = positionY + direction.y;
             Vector2 nextPosition = new Vector2(toX, toY);
@@ -60,28 +60,29 @@ namespace Searching
                 return;
             }
 
-
             float fromX = positionX;
             float fromY = positionY;
-            
+
             positionX = toX;
             positionY = toY;
             Vector3 targetPosition = new Vector3(positionX, positionY, 0);
-            Debug.Log(mapScript.GetNode(targetPosition));
-            SetNode(targetPosition, "player");
-            SetNode(transform.position, "empty");
-            StartCoroutine(MoveSmoothly(targetPosition));
-            TakeDamage(1);
-
-            if (this is OOPPlayer)
+            Vector3 currentPosition = new Vector3(fromX, fromY, 0);
+            if (!HasPlacement(targetPosition))
             {
-                if (fromX != positionX || fromY != positionY)
-                {
-                    mapGenerator.MoveEnemies();
-                }
+                positionX -= direction.x;
+                positionY -= direction.y;
+                return;
             }
-
+            else
+            {
+                SetNode(targetPosition, "player");
+                SetNode(currentPosition, "empty");
+                StartCoroutine(MoveSmoothly(targetPosition));
+                TakeDamage(1);
+            }
+            mapGenerator.MoveEnemies();
         }
+        
         
         public IEnumerator MoveSmoothly(Vector3 targetPosition)
         {
@@ -101,12 +102,50 @@ namespace Searching
             isMoving = false;
         }
         // hasPlacement คืนค่า true ถ้ามีการวางอะไรไว้บน map ที่ตำแหน่ง x,y
-        /*public bool HasPlacement(int x, int y)
+        public bool HasPlacement(Vector3 position)
         {
-            int mapData = mapGenerator.GetMapData(x, y);
-            return mapData != mapGenerator.empty;
+            GameObject nodeObject = mapScript.GetNode(position);
+            if (nodeObject != null)
+            {
+                Node nodeS = nodeObject.GetComponent<Node>();
+        
+                if (nodeS != null)
+                {
+                    if (nodeS.onMe == "empty")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return false;
         }
-        public bool IsPotion(int x, int y)
+        
+        public bool IsEnemy(Vector3 position)
+        {
+            GameObject nodeObject = mapScript.GetNode(position);
+            if (nodeObject != null)
+            {
+                Node nodeS = nodeObject.GetComponent<Node>();
+        
+                if (nodeS != null)
+                {
+                    if (nodeS.onMe == "enemy")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+        /*public bool IsPotion(int x, int y)
         {
             int mapData = mapGenerator.GetMapData(x, y);
             return mapData == mapGenerator.potion;
@@ -130,8 +169,8 @@ namespace Searching
         {
             int mapData = mapGenerator.GetMapData(x, y);
             return mapData == mapGenerator.exit;
-        }
-        */
+        }*/
+        
         
         public virtual void TakeDamage(int Damage)
         {
@@ -152,7 +191,7 @@ namespace Searching
         public void SetNode(Vector3 position, string name)
         {
             GameObject nodeObject = mapScript.GetNode(position);
-    
+
             if (nodeObject != null)
             {
                 Node nodeS = nodeObject.GetComponent<Node>();

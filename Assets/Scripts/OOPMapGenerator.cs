@@ -59,52 +59,11 @@ namespace Searching
                 player.positionY = startPosition.y;
                 player.transform.position = new Vector3(startPosition.x, startPosition.y, -0.1f);
             }
-
-            int count = 0;
-            /*potions = new OOPItemPotion[X, Y];
-            count = 0;
-            while (count < itemCount)
-            {
-                int x = Random.Range(0, X);
-                int y = Random.Range(0, Y);
-                if (mapdata[x, y] == empty)
-                {
-                    PlaceItem(x, y);
-                    count++;
-                }
-            }
-
-            keys = new OOPItemKey[X, Y];
-            count = 0;
-            while (count < itemKeyCount)
-            {
-                int x = Random.Range(0, X);
-                int y = Random.Range(0, Y);
-                if (mapdata[x, y] == empty)
-                {
-                    PlaceKey(x, y);
-                    count++;
-                }
-            }
-
-            enemies = new OOPEnemy[X, Y];
-            count = 0;
-            while (count < enemyCount)
-            {
-                int x = Random.Range(0, X);
-                int y = Random.Range(0, Y);
-                if (mapdata[x, y] == empty)
-                {
-                    PlaceEnemy(x, y);
-                    AStarManager.instance.FindNearestNode(player.transform.position);
-                    count++;
-                }
-            }*/
+            
             
             Vector3 exitPosition = FindHighestNodePosition();
             SetNode(exitPosition, "exit");
             Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
-            /*mapdata[exitPosX, exitPosY] = exit;*/
         }
         
         private void Update()
@@ -375,6 +334,12 @@ namespace Searching
         
         public void MoveEnemies()
         {
+            StartCoroutine(MoveEnemy());
+        }
+        
+        public IEnumerator MoveEnemy()
+        {
+            yield return new WaitForSeconds(0.5f);
             List<OOPEnemy> list = new List<OOPEnemy>(enemies.Values);
 
             foreach (var enemy in list)
@@ -382,7 +347,6 @@ namespace Searching
                 enemy.CreatePath();
             }
         }
-        
         public void RemoveAllEnemies()
         {
             foreach (var enemy in enemies.Values)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Searching
@@ -30,7 +31,7 @@ namespace Searching
             }
             GetRemainEnergy();
             GeneratePathToPlayer();
-            
+
             Node startNode = AStarManager.instance.FindNearestNode(transform.position);
             currentNode = startNode;
         }
@@ -77,9 +78,8 @@ namespace Searching
             {
                 Node nextNode = path[0];
                 currentNode = nextNode;
-                path.RemoveAt(0);
-                    
                 MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
+
             }
         }
         
@@ -104,7 +104,7 @@ namespace Searching
             Node endNode = AStarManager.instance.FindNearestNode(player.position);
             path = AStarManager.instance.GeneratePath(startNode, endNode);
             currentPathIndex = 0;
-
+            
             CreatePath();
             MoveOneStepTowardsPlayer();
         }
@@ -121,24 +121,30 @@ namespace Searching
 
         private void MoveToPosition(float x, float y)
         {
-            /*if (!HasPlacement(x, y))
+            Vector3 nextPo = new Vector3(x, y);
+            if (!HasPlacement(nextPo))
             {
-                mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
-                mapGenerator.enemies[positionX, positionY] = null;
-                positionX = x;
-                positionY = y;
-                mapGenerator.mapdata[positionX, positionY] = mapGenerator.enemy;
-                mapGenerator.enemies[positionX, positionY] = this;
-                
-                Vector3 targetPosition = new Vector3(positionX, positionY, 0);
+                if (IsEnemy(nextPo))
+                {
+                    path.RemoveAt(0);
+                    Vector3 targetPosition = new Vector3(x, y, 0);
+                    SetNode(targetPosition, "enemy");
+                    SetNode(transform.position, "empty");
+                    StartCoroutine(MoveSmoothly(targetPosition));
+                }
+                else
+                {
+                    return;
+                }
+            }
+            else
+            {
+                path.RemoveAt(0);
+                Vector3 targetPosition = new Vector3(x, y, 0);
+                SetNode(targetPosition, "enemy");
+                SetNode(transform.position, "empty");
                 StartCoroutine(MoveSmoothly(targetPosition));
-            }*/
-            positionX = x;
-            positionY = y;
-            Vector3 targetPosition = new Vector3(positionX, positionY, 0);
-            SetNode(targetPosition, "enemy");
-            SetNode(transform.position, "empty");
-            StartCoroutine(MoveSmoothly(targetPosition));
+            }
         }
     }
 }
