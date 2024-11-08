@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 namespace Searching
 {
 
-    public class OOPMapGenerator : RoomFirstDungeonGenerator
+    public class OOPMapGenerator : DungeonGenerator
     {
         [Header("Set Player")]
         public OOPPlayer player;

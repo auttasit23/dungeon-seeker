@@ -9,7 +9,7 @@ namespace Searching
     public class OOPPlayer : Character
     {
         public Inventory inventory;
-
+        
         public void Start()
         {
             PrintInfo();
@@ -43,18 +43,39 @@ namespace Searching
 
         public void Attack(OOPEnemy _enemy)
         {
-            _enemy.TakeDamage(AttackPoint);
+            _enemy.TakeDamage(damage);
         }
 
         protected override void CheckDead()
         {
             base.CheckDead();
-            if (energy <= 0)
+            if (maxHealth <= 0)
             {
                 Debug.Log("Player is Dead");
             }
         }
-
+        
+        public void AddStat(string statName, int value)
+        {
+            switch (statName.ToLower())
+            {
+                case "damage":
+                    damage += value;
+                    break;
+                case "hitchance":
+                    hitchance += value;
+                    break;
+                case "maxhealth":
+                    maxHealth += value;
+                    break;
+                case "evasion":
+                    evasion += value;
+                    break;
+                default:
+                    Debug.LogWarning("Stat name not recognized: " + statName);
+                    break;
+            }
+        }
         /*public void UseFireStorm()
         {
             if (inventory.numberOfItem("FireStorm") > 0)

@@ -12,8 +12,10 @@ namespace Searching
     public class Character : Identity
     {
         [Header("Character")]
-        public int energy;
-        public int AttackPoint;
+        public int maxHealth;
+        public int damage;
+        public int hitchance;
+        public int evasion;
 
         protected bool isAlive;
         protected bool isFreeze;
@@ -26,7 +28,7 @@ namespace Searching
 
         protected void GetRemainEnergy()
         {
-            Debug.Log(Name + " : " + energy);
+            Debug.Log(Name + " : " + maxHealth);
         }
 
         public virtual void Move(Vector2 direction)
@@ -74,7 +76,6 @@ namespace Searching
                     List<OOPEnemy> list = new List<OOPEnemy>(mapGenerator.enemies.Values);
                     foreach (var enemy in list)
                     {
-                        Debug.Log("1");
                         enemy.Hit();
                         positionX -= direction.x;
                         positionY -= direction.y;
@@ -184,16 +185,16 @@ namespace Searching
         
         public virtual void TakeDamage(int Damage)
         {
-            energy -= Damage;
-            Debug.Log(Name + " Current Energy : " + energy);
+            maxHealth -= Damage;
+            Debug.Log(Name + " Current Energy : " + maxHealth);
             CheckDead();
         }
         public virtual void TakeDamage(int Damage, bool freeze)
         {
-            energy -= Damage;
+            maxHealth -= Damage;
             isFreeze = freeze;
             GetComponent<SpriteRenderer>().color = Color.blue;
-            Debug.Log(Name + " Current Energy : " + energy);
+            Debug.Log(Name + " Current Energy : " + maxHealth);
             Debug.Log("you is Freeze");
             CheckDead();
         }
@@ -225,13 +226,13 @@ namespace Searching
 
         public void Heal(int healPoint, bool Bonuse)
         {
-            energy += healPoint * (Bonuse ? 2 : 1);
-            Debug.Log("Current Energy : " + energy);
+            maxHealth += healPoint * (Bonuse ? 2 : 1);
+            Debug.Log("Current Energy : " + maxHealth);
         }
 
         protected virtual void CheckDead()
         {
-            if (energy <= 0)
+            if (maxHealth <= 0)
             {
                 Destroy(gameObject);
             }

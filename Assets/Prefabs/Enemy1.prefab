@@ -149,8 +149,9 @@ MonoBehaviour:
   mapGenerator: {fileID: 0}
   energy: 4
   AttackPoint: 0
+  mapScript: {fileID: 0}
   player: {fileID: 0}
   playerObject: {fileID: 0}
-  moveInterval: 1
+  maxHealth: 30
   currentNode: {fileID: 0}
   path: []

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Searching
 {
@@ -49,23 +50,42 @@ namespace Searching
 
         public override void Hit()
         {
-            SetNode(transform.position, "empty");
-            Destroy(gameObject);
+            if (gameObject != null)
+            {
+                int randomValue = Random.Range(0,100);
+                if (randomValue < mapScript.player.hitchance)
+                {
+                    maxHealth -= mapScript.player.damage;
+                    Debug.Log("Enemy Health: " +maxHealth);
+                }
+                else
+                {
+                    Debug.Log("Enemy dodge");
+                }
+
+                if (mapScript.player.evasion > randomValue)
+                {
+                    this.Attack(mapScript.player);
+                    Debug.Log("Enemy Attack Miss");
+                }
+                CheckDead();
+            }
         }
 
         public void Attack(OOPPlayer _player)
         {
-            _player.TakeDamage(AttackPoint);
+            damage = 5;
+            _player.TakeDamage(damage);
         }
 
         protected override void CheckDead()
         {
-            base.CheckDead();
-            /*if (energy <= 0)
+            if (maxHealth <= 0)
             {
-                mapGenerator.enemies[positionX, positionY] = null;
-                mapGenerator.mapdata[positionX, positionY] = mapGenerator.empty;
-            }*/
+                Debug.Log("Enemy kill");
+                SetNode(transform.position, "empty");
+                Destroy(gameObject);
+            }
         }
         public void CreatePath()
         {

@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class RoomFirstDungeonGenerator : MonoBehaviour
+public class DungeonGenerator : MonoBehaviour
 {
     [SerializeField]
     private int minRoomWidth = 4, minRoomHeight = 4;
