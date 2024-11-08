@@ -17,6 +17,8 @@ namespace Searching
         
         private int currentPathIndex = 0;
         private bool shouldMove = false;
+        
+        public CameraFollow camera;
 
         public void Start()
         {
@@ -29,6 +31,11 @@ namespace Searching
             if (mapScript == null)
             {
                 Debug.LogError("OOPMapGenerator not found in the scene!");
+            }
+            camera = FindObjectOfType<CameraFollow>();
+            if (mapScript == null)
+            {
+                Debug.LogError("CameraFollow not found in the scene!");
             }
             GetRemainEnergy();
             GeneratePathToPlayer();
@@ -52,6 +59,7 @@ namespace Searching
         {
             if (gameObject != null)
             {
+                camera.ShakeCamera(0.2f,0.3f);
                 int randomValue = Random.Range(0,100);
                 if (randomValue < mapScript.player.hitchance)
                 {
