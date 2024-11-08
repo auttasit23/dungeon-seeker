@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 namespace Searching
 {
     public class OOPPlayer : Character
     {
         public Inventory inventory;
-        
+        public float moveCooldown = 0.5f;
+        private float moveCooldownTimer = 0f;
         public void Start()
         {
             PrintInfo();
@@ -23,23 +25,36 @@ namespace Searching
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if (moveCooldownTimer > 0)
             {
-                Move(Vector2.up);
+                moveCooldownTimer -= Time.deltaTime;
             }
-            if (Input.GetKeyDown(KeyCode.S))
+            
+            if (moveCooldownTimer <= 0)
             {
-                Move(Vector2.down);
-            }
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                Move(Vector2.left);
-            }
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                Move(Vector2.right);
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    Move(Vector2.up);
+                    moveCooldownTimer = moveCooldown;
+                }
+                else if (Input.GetKeyDown(KeyCode.S))
+                {
+                    Move(Vector2.down);
+                    moveCooldownTimer = moveCooldown;
+                }
+                else if (Input.GetKeyDown(KeyCode.A))
+                {
+                    Move(Vector2.left);
+                    moveCooldownTimer = moveCooldown;
+                }
+                else if (Input.GetKeyDown(KeyCode.D))
+                {
+                    Move(Vector2.right);
+                    moveCooldownTimer = moveCooldown;
+                }
             }
         }
+        
 
         public void Attack(OOPEnemy _enemy)
         {

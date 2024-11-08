@@ -19,6 +19,7 @@ namespace Searching
         private bool shouldMove = false;
         
         public CameraFollow camera;
+        public GameObject floatingPoints;
 
         public void Start()
         {
@@ -33,7 +34,7 @@ namespace Searching
                 Debug.LogError("OOPMapGenerator not found in the scene!");
             }
             camera = FindObjectOfType<CameraFollow>();
-            if (mapScript == null)
+            if (camera == null)
             {
                 Debug.LogError("CameraFollow not found in the scene!");
             }
@@ -54,7 +55,7 @@ namespace Searching
                 GeneratePathToPlayer();
             }
         }
-
+        
         public override void Hit()
         {
             if (gameObject != null)
@@ -63,6 +64,7 @@ namespace Searching
                 int randomValue = Random.Range(0,100);
                 if (randomValue < mapScript.player.hitchance)
                 {
+                    Instantiate(floatingPoints, transform.position, Quaternion.identity);
                     maxHealth -= mapScript.player.damage;
                     Debug.Log("Enemy Health: " +maxHealth);
                 }

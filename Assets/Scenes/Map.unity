@@ -326,6 +326,8 @@ MonoBehaviour:
   target: {fileID: 2142152732}
   smoothSpeed: 0.125
   offset: {x: 0, y: 0, z: 0}
+  shakeDuration: 0.2
+  shakeMagnitude: 0.1
 --- !u!1 &634705955
 GameObject:
   m_ObjectHideFlags: 0
@@ -1471,9 +1473,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5615206909734415387, guid: 4c033ef69eb269849bab9de975c465ed, type: 3}
+      propertyPath: damage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5615206909734415387, guid: 4c033ef69eb269849bab9de975c465ed, type: 3}
+      propertyPath: evasion
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5615206909734415387, guid: 4c033ef69eb269849bab9de975c465ed, type: 3}
+      propertyPath: hitchance
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 5615206909734415387, guid: 4c033ef69eb269849bab9de975c465ed, type: 3}
       propertyPath: inventory
       value: 
       objectReference: {fileID: 418901505}
+    - target: {fileID: 5615206909734415387, guid: 4c033ef69eb269849bab9de975c465ed, type: 3}
+      propertyPath: maxHealth
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 5615206909734415387, guid: 4c033ef69eb269849bab9de975c465ed, type: 3}
       propertyPath: mapGenerator
       value: 
