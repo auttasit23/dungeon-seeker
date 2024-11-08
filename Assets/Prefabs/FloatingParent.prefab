@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6288441726678541203}
   - component: {fileID: 245101335484654213}
   - component: {fileID: 5507914313686568772}
+  - component: {fileID: 2827097316661649849}
   m_Layer: 0
   m_Name: FloatingPoints
   m_TagString: Untagged
@@ -97,6 +98,27 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190335
+--- !u!95 &2827097316661649849
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16289662524293967}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 57f10cefade9b914c8f2d188d261fefb, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2768330661223070888
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5426841377765623056}
-  - component: {fileID: 949135924823379014}
+  - component: {fileID: -4640663971533556590}
   m_Layer: 0
   m_Name: FloatingParent
   m_TagString: Untagged
@@ -130,24 +152,15 @@ Transform:
   - {fileID: 6288441726678541203}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &949135924823379014
-Animator:
-  serializedVersion: 5
+--- !u!114 &-4640663971533556590
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2768330661223070888}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6897d123e2e9fb844a69f2b06693fd1e, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2dd69d46381dbd46bbbb6e693511082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

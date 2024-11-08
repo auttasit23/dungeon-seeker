@@ -64,19 +64,33 @@ namespace Searching
                 int randomValue = Random.Range(0,100);
                 if (randomValue < mapScript.player.hitchance)
                 {
-                    Instantiate(floatingPoints, transform.position, Quaternion.identity);
+                    GameObject points = Instantiate(floatingPoints, transform.position, Quaternion.identity) as GameObject;
+                    points.transform.GetChild(0).GetComponent<TextMesh>().text = mapScript.player.damage.ToString();
                     maxHealth -= mapScript.player.damage;
                     Debug.Log("Enemy Health: " +maxHealth);
                 }
                 else
                 {
+                    GameObject points = Instantiate(floatingPoints, transform.position, Quaternion.identity) as GameObject;
+                    TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
+                    textMesh.text = "Miss";
+                    textMesh.color = Color.green;
                     Debug.Log("Enemy dodge");
                 }
 
                 if (mapScript.player.evasion > randomValue)
                 {
-                    this.Attack(mapScript.player);
+                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity) as GameObject;
+                    TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
+                    textMesh.text = "Miss";
+                    textMesh.color = Color.green;
                     Debug.Log("Enemy Attack Miss");
+                }
+                else
+                {
+                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity) as GameObject;
+                    points.transform.GetChild(0).GetComponent<TextMesh>().text = damage.ToString();
+                    this.Attack(mapScript.player);
                 }
                 CheckDead();
             }
