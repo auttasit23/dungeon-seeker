@@ -398,7 +398,7 @@ public class DungeonGenerator : MonoBehaviour
             case RoomType.PlayerRoom: return Color.green;
             case RoomType.EnemyRoom: return Color.red;
             case RoomType.TreasureRoom: return Color.yellow;
-            case RoomType.ExitRoom: return Color.blue;
+            case RoomType.ExitRoom: return Color.cyan;
             default: return Color.white;
         }
     }

@@ -54,11 +54,7 @@ namespace Searching
             Vector3 randomPos = RandomNode();
             PlaceEnemy();
             PlacePlayer();
-
-
-            Vector3 exitPosition = FindHighestNodePosition();
-            SetNode(exitPosition, "exit");
-            Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
+            PlaceExit();
         }
         
         private void Update()
@@ -93,9 +89,7 @@ namespace Searching
             //ย้ายผู้เล่นไปจุดเริ่มต้น
             PlacePlayer();
             //ย้ายทางออก
-            Vector3 exitPosition = FindHighestNodePosition();
-            SetNode(exitPosition, "exit");
-            Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
+            PlaceExit();
         }
         
         public Vector3 FindClosestNodePosition(Vector3 targetPosition)
@@ -323,6 +317,23 @@ namespace Searching
                 }
             }
         }
+        
+        public void PlaceExit()
+        {
+            for (int i = 0; i < roomsList.Count; i++)
+            {
+                if (roomTypes[i] == RoomType.ExitRoom)
+                {
+                    Vector3 roomCenter = (Vector3)roomsList[i].center;
+                    Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
+                    Exit.transform.position = new Vector3(closestNodePosition.x, closestNodePosition.y, 0);
+                    SetNode(closestNodePosition, "exit");
+                    player.positionX = closestNodePosition.x;
+                    player.positionY = closestNodePosition.y;
+                    break;
+                }
+            }
+        }
 
         public void PlaceKey(int x, int y)
         {
@@ -364,13 +375,11 @@ namespace Searching
                         obj.name = $"Enemy_{enemyComponent.Name}_{j + 1}";
 
                         Vector2 key = new Vector2(position.x, position.y);
-                
-                        // ตรวจสอบว่าคีย์นี้มีอยู่ใน Dictionary แล้วหรือยัง
+                        
                         if (!enemies.ContainsKey(key))
                         {
                             enemies[key] = new List<OOPEnemy>();
                         }
-                        // เพิ่มศัตรูเข้าไปในลิสต์ของคีย์นั้น
                         enemies[key].Add(enemyComponent);
 
                         SetNode(position, "enemy");
@@ -419,7 +428,6 @@ namespace Searching
 
         public void RemoveAllEnemies()
         {
-            // ลบ GameObject ของศัตรูทั้งหมดจาก Dictionary
             foreach (var enemyList in enemies.Values)
             {
                 foreach (var enemy in enemyList)
