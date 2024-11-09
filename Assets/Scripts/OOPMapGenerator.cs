@@ -328,8 +328,6 @@ namespace Searching
                     Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
                     Exit.transform.position = new Vector3(closestNodePosition.x, closestNodePosition.y, 0);
                     SetNode(closestNodePosition, "exit");
-                    player.positionX = closestNodePosition.x;
-                    player.positionY = closestNodePosition.y;
                     break;
                 }
             }

@@ -129,6 +129,7 @@ namespace Searching
         {
             if (path.Count == 0 || path.Count == null)
             {
+                isPathGenerated = false;
                 GeneratePathToPlayer();
             }
             
@@ -189,18 +190,9 @@ namespace Searching
     
             if (!HasPlacement(newPosition))
             {
-                if (IsEnemy(newPosition))
-                {
-                    path.RemoveAt(0);
-                    Vector3 targetPosition = new Vector3(x, y, 0);
-                    SetNode(targetPosition, "enemy");
-                    SetNode(transform.position, "empty");
-                    StartCoroutine(MoveSmoothly(targetPosition));
-                }
-                else
-                {
-                    return;
-                }
+                GeneratePathToPlayer();
+                path.RemoveAt(0);
+                return;
             }
             else
             {

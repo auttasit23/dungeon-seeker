@@ -71,7 +71,6 @@ namespace Searching
             Vector3 currentPosition = new Vector3(fromX, fromY, 0);
             if (!HasPlacement(targetPosition))
             {
-                Debug.Log(IsEnemy(targetPosition));
                 if (IsEnemy(targetPosition))
                 {
                     List<OOPEnemy> enemiesAtTargetPosition = mapGenerator.enemies[new Vector2(positionX, positionY)];
