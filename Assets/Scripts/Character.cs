@@ -71,12 +71,13 @@ namespace Searching
             Vector3 currentPosition = new Vector3(fromX, fromY, 0);
             if (!HasPlacement(targetPosition))
             {
+                Debug.Log(IsEnemy(targetPosition));
                 if (IsEnemy(targetPosition))
                 {
-                    List<OOPEnemy> list = new List<OOPEnemy>(mapGenerator.enemies.Values);
-                    foreach (var enemy in list)
+                    List<OOPEnemy> enemiesAtTargetPosition = mapGenerator.enemies[new Vector2(positionX, positionY)];
+                    foreach (var enemy in enemiesAtTargetPosition)
                     {
-                        enemy.Hit();
+                        enemy.Hit(targetPosition);
                         positionX -= direction.x;
                         positionY -= direction.y;
                         return; 
@@ -139,28 +140,24 @@ namespace Searching
             }
             return false;
         }
-        
+
         public bool IsEnemy(Vector3 position)
         {
-            GameObject nodeObject = mapScript.GetNode(position);
-            if (nodeObject != null)
+            if (mapScript == null)
             {
-                Node nodeS = nodeObject.GetComponent<Node>();
-        
-                if (nodeS != null)
-                {
-                    if (nodeS.onMe == "enemy")
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
+                Debug.LogError("mapGenerator is not assigned.");
+                return false;
+            }
+
+            Vector2 targetKey = new Vector2(position.x, position.y);
+            if (mapScript.enemies.ContainsKey(targetKey) && mapScript.enemies[targetKey].Count > 0)
+            {
+                return true;
             }
             return false;
         }
+
+
         /*public bool IsPotion(int x, int y)
         {
             int mapData = mapGenerator.GetMapData(x, y);

@@ -6,6 +6,21 @@ using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[System.Serializable]
+public class ItemData
+{
+    public enum PlacementType
+    {
+        InOpenArea,
+        NearWall
+    }
+    public int MinQuantity;
+    public int MaxQuantity;
+    public GameObject Item;
+    public PlacementType Placement;
+}
+
+
 public class DungeonGenerator : MonoBehaviour
 {
     [SerializeField]
@@ -28,12 +43,27 @@ public class DungeonGenerator : MonoBehaviour
     protected TilemapVisualizer tilemapVisualizer = null;
     [SerializeField]
     protected Vector2Int startPosition = Vector2Int.zero;
+    [Header("Item Placement Data")]
+    [SerializeField]
+    private List<ItemData> itemDataList = new List<ItemData>();
+    
+    //Room Data
+    public enum RoomType { PlayerRoom, EnemyRoom, TreasureRoom, ExitRoom, Other }
+    
+    [SerializeField] private int enemyRoomCount = 1;
+    [SerializeField] private int treasureRoomCount = 1;
+
+    public List<BoundsInt> roomsList;
+    public List<RoomType> roomTypes;
+    public HashSet<Vector2Int> floor;
     
     public void CreateRooms()
     {
-        var roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
-
-        HashSet<Vector2Int> floor = CreateRoomsRandomly(roomsList);
+        roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
+        Debug.Log($"Total rooms created: {roomsList.Count}");
+        roomTypes = AssignRoomTypes(roomsList.Count);
+        
+        floor = CreateRoomsRandomly(roomsList);
 
         List<Vector2Int> roomCenters = new List<Vector2Int>();
         foreach (var room in roomsList)
@@ -53,6 +83,10 @@ public class DungeonGenerator : MonoBehaviour
 
         tilemapVisualizer.PaintFloorTiles(floor);
         WallGenerator.CreateWalls(floor, tilemapVisualizer);
+        foreach (var room in roomsList)
+        {
+            PlaceItemsInRoom(room);
+        }
     }
 
     private HashSet<Vector2Int> ConnectRooms(List<Vector2Int> roomCenters)
@@ -114,6 +148,72 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
+    
+    private void PlaceItemsInRoom(BoundsInt room)
+    {
+        foreach (var item in itemDataList)
+        {
+            int quantity = Random.Range(item.MinQuantity, item.MaxQuantity + 1);
+            for (int i = 0; i < quantity; i++)
+            {
+                bool itemPlaced = false;
+                int attempts = 0;
+                int maxAttempts = 100;
+
+                while (!itemPlaced && attempts < maxAttempts)
+                {
+                    int x = Random.Range(room.xMin + 1, room.xMax - 1);
+                    int y = Random.Range(room.yMin + 1, room.yMax - 1);
+                    Vector2Int position = new Vector2Int(x, y);
+
+                    attempts++;
+                    if (nodes.ContainsKey(position) && nodes[position].ItemPlaced == false)
+                    {
+                        bool isSurrounded = CheckNodeSurroundings(position);
+
+                        if ((item.Placement == ItemData.PlacementType.InOpenArea && isSurrounded) ||
+                            (item.Placement == ItemData.PlacementType.NearWall && !isSurrounded))
+                        {
+                            GameObject itemObject = Instantiate(item.Item, new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+                            itemObject.transform.parent = nodesParent;
+                            nodes[position].ItemPlaced = true;
+                            itemPlaced = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    
+    public bool CheckNodeSurroundings(Vector2Int position)
+    {
+        if (!nodes.ContainsKey(position)) return false;
+
+        Node currentNode = nodes[position];
+        Vector2Int[] directions = {
+            Vector2Int.up,  
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
+
+        int connectedCount = 0;
+
+        foreach (var direction in directions)
+        {
+            Vector2Int neighborPos = position + direction;
+            if (nodes.ContainsKey(neighborPos) && currentNode.connections.Contains(nodes[neighborPos]))
+            {
+                connectedCount++;
+            }
+        }
+        
+        return connectedCount == directions.Length;
+    }
+    
+
     
     public void ClearNodes()
     {
@@ -229,5 +329,77 @@ public class DungeonGenerator : MonoBehaviour
                 currentPosition = floorPositions.ElementAt(Random.Range(0, floorPositions.Count));
         }
         return floorPositions;
+    }
+    
+    private List<RoomType> AssignRoomTypes(int roomCount)
+    {
+        List<RoomType> assignedRoomTypes = new List<RoomType>();
+
+        int remainingEnemyRooms = enemyRoomCount;
+        int remainingTreasureRooms = treasureRoomCount;
+
+        if (roomCount > 0)
+        {
+            assignedRoomTypes.Add(RoomType.PlayerRoom);
+
+            for (int i = 1; i < roomCount - 1; i++)
+            {
+                if (remainingEnemyRooms > 0)
+                {
+                    assignedRoomTypes.Add(RoomType.EnemyRoom);
+                    remainingEnemyRooms--;
+                }
+                else if (remainingTreasureRooms > 0)
+                {
+                    assignedRoomTypes.Add(RoomType.TreasureRoom);
+                    remainingTreasureRooms--;
+                }
+                else
+                {
+                    assignedRoomTypes.Add(RoomType.Other);
+                }
+            }
+
+            assignedRoomTypes.Add(RoomType.ExitRoom);
+        }
+
+        return assignedRoomTypes;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (roomsList == null || roomTypes == null || roomsList.Count != roomTypes.Count) return;
+    
+        for (int roomIndex = 0; roomIndex < roomsList.Count; roomIndex++)
+        {
+            Color roomColor = GetRoomColor(roomTypes[roomIndex]);
+            roomColor.a = 0.1f;
+        
+            Gizmos.color = roomColor;
+
+            BoundsInt room = roomsList[roomIndex];
+            foreach (var position in floor)
+            {
+                if (position.x >= room.xMin && position.x < room.xMax &&
+                    position.y >= room.yMin && position.y < room.yMax)
+                {
+                    Vector3 drawPos = new Vector3(position.x + 0.5f, position.y + 0.5f, 0);
+                    Gizmos.DrawCube(drawPos, Vector3.one);
+                }
+            }
+        }
+    }
+
+
+    private Color GetRoomColor(RoomType type)
+    {
+        switch (type)
+        {
+            case RoomType.PlayerRoom: return Color.green;
+            case RoomType.EnemyRoom: return Color.red;
+            case RoomType.TreasureRoom: return Color.yellow;
+            case RoomType.ExitRoom: return Color.blue;
+            default: return Color.white;
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace Searching
         [Header("Set Player")]
         public OOPPlayer player;
         public Vector2Int playerStartPos;
+        public int maxEnemy = 1;
 
         [Header("Set Exit")]
         public OOPExit Exit;
@@ -33,7 +34,7 @@ namespace Searching
         
         public OOPItemPotion[,] potions;
         public OOPItemKey[,] keys;
-        public Dictionary<Vector2, OOPEnemy> enemies = new Dictionary<Vector2, OOPEnemy>();
+        public Dictionary<Vector2, List<OOPEnemy>> enemies = new Dictionary<Vector2, List<OOPEnemy>>();
 
         // block types ...
         [Header("Block Types")]
@@ -51,17 +52,10 @@ namespace Searching
         {
             CreateRooms();
             Vector3 randomPos = RandomNode();
-            PlaceEnemy(randomPos.x,randomPos.y);
-            Vector3 startPosition = FindLowestNodePosition();
-            if (startPosition != Vector3.negativeInfinity)
-            {
-                SetNode(startPosition, "player");
-                player.positionX = startPosition.x;
-                player.positionY = startPosition.y;
-                player.transform.position = new Vector3(startPosition.x, startPosition.y, -0.1f);
-            }
-            
-            
+            PlaceEnemy();
+            PlacePlayer();
+
+
             Vector3 exitPosition = FindHighestNodePosition();
             SetNode(exitPosition, "exit");
             Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
@@ -95,23 +89,48 @@ namespace Searching
                 }
             }
             yield return new WaitForSeconds(0.3f);
-            Vector3 randomPos = RandomNode();
-            PlaceEnemy(randomPos.x,randomPos.y);
+            PlaceEnemy();
             //ย้ายผู้เล่นไปจุดเริ่มต้น
-            Vector3 startPosition = FindLowestNodePosition();
-            if (startPosition != Vector3.negativeInfinity)
-            {
-                SetNode(startPosition, "player");
-                player.positionX = startPosition.x;
-                player.positionY = startPosition.y;
-                player.transform.position = new Vector3(startPosition.x, startPosition.y, -0.1f);
-            }
-                
+            PlacePlayer();
             //ย้ายทางออก
             Vector3 exitPosition = FindHighestNodePosition();
             SetNode(exitPosition, "exit");
             Exit.transform.position = new Vector3(exitPosition.x, exitPosition.y, 0);
         }
+        
+        public Vector3 FindClosestNodePosition(Vector3 targetPosition)
+        {
+            if (nodesParent == null)
+            {
+                return Vector3.negativeInfinity;
+            }
+
+            Transform closestNode = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (Transform child in nodesParent)
+            {
+                if (child.name.StartsWith("Node_"))
+                {
+                    float distance = Vector3.Distance(targetPosition, child.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestNode = child;
+                    }
+                }
+            }
+
+            if (closestNode != null)
+            {
+                return closestNode.position;
+            }
+            else
+            {
+                return Vector3.negativeInfinity;
+            }
+        }
+
 
         public Vector3 FindLowestNodePosition()
         {
@@ -150,7 +169,9 @@ namespace Searching
                 return Vector3.negativeInfinity;
             }
         }
-        
+
+
+
         public Vector3 FindHighestNodePosition()
         {
             if (nodesParent == null)
@@ -286,7 +307,22 @@ namespace Searching
                 }
             }*/
         }
-
+        public void PlacePlayer()
+        {
+            for (int i = 0; i < roomsList.Count; i++)
+            {
+                if (roomTypes[i] == RoomType.PlayerRoom)
+                {
+                    Vector3 roomCenter = (Vector3)roomsList[i].center;
+                    Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
+                    player.transform.position = closestNodePosition;
+                    SetNode(closestNodePosition, "player");
+                    player.positionX = closestNodePosition.x;
+                    player.positionY = closestNodePosition.y;
+                    break;
+                }
+            }
+        }
 
         public void PlaceKey(int x, int y)
         {
@@ -301,23 +337,46 @@ namespace Searching
             obj.name = $"Item_{keys[x, y].Name} {x}, {y}";
         }
 
-        public void PlaceEnemy(float x, float y)
+        public void PlaceEnemy()
         {
-            int r = Random.Range(0, enemiesPrefab.Length);
-            Vector3 position = new Vector3(x, y, -1);
-            SetNode(position, "enemy");
-            GameObject obj = Instantiate(enemiesPrefab[r], position, Quaternion.identity);
-            obj.transform.parent = enemyParent;
-            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
+            for (int i = 0; i < roomsList.Count; i++)
             {
-                spriteRenderer.sortingOrder = 1;
+                if (roomTypes[i] == RoomType.EnemyRoom)
+                {
+                    Vector3 roomCenter = (Vector3)roomsList[i].center;
+
+                    for (int j = 0; j < maxEnemy; j++)
+                    {
+                        Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
+                        Vector3 position = new Vector3(closestNodePosition.x, closestNodePosition.y, -1);
+
+                        int r = Random.Range(0, enemiesPrefab.Length);
+                        GameObject obj = Instantiate(enemiesPrefab[r], position, Quaternion.identity);
+                        obj.transform.parent = enemyParent;
+
+                        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                        if (spriteRenderer != null)
+                        {
+                            spriteRenderer.sortingOrder = 1;
+                        }
+
+                        OOPEnemy enemyComponent = obj.GetComponent<OOPEnemy>();
+                        obj.name = $"Enemy_{enemyComponent.Name}_{j + 1}";
+
+                        Vector2 key = new Vector2(position.x, position.y);
+                
+                        // ตรวจสอบว่าคีย์นี้มีอยู่ใน Dictionary แล้วหรือยัง
+                        if (!enemies.ContainsKey(key))
+                        {
+                            enemies[key] = new List<OOPEnemy>();
+                        }
+                        // เพิ่มศัตรูเข้าไปในลิสต์ของคีย์นั้น
+                        enemies[key].Add(enemyComponent);
+
+                        SetNode(position, "enemy");
+                    }
+                }
             }
-            OOPEnemy enemyComponent = obj.GetComponent<OOPEnemy>();
-            obj.name = $"Enemy_{enemyComponent.Name} {x}, {y}";
-            
-            Vector2 key = new Vector2(x, y);
-            enemies[key] = enemyComponent;
         }
         
         public void SetNode(Vector3 position, string name)
@@ -343,8 +402,12 @@ namespace Searching
         public IEnumerator MoveEnemy()
         {
             yield return new WaitForSeconds(0.5f);
-            List<OOPEnemy> list = new List<OOPEnemy>(enemies.Values);
-
+            
+            List<OOPEnemy> list = new List<OOPEnemy>();
+            foreach (var enemyList in enemies.Values)
+            {
+                list.AddRange(enemyList);
+            }
             foreach (var enemy in list)
             {
                 if (enemy != null)
@@ -353,19 +416,21 @@ namespace Searching
                 }
             }
         }
+
         public void RemoveAllEnemies()
         {
-            foreach (var enemy in enemies.Values)
+            // ลบ GameObject ของศัตรูทั้งหมดจาก Dictionary
+            foreach (var enemyList in enemies.Values)
             {
-                if (enemy != null)
+                foreach (var enemy in enemyList)
                 {
-                    Destroy(enemy.gameObject);
+                    if (enemy != null)
+                    {
+                        Destroy(enemy.gameObject);
+                    }
                 }
             }
-            
             enemies.Clear();
         }
-
-
     }
 }

@@ -20,6 +20,7 @@ namespace Searching
         
         public CameraFollow camera;
         public GameObject floatingPoints;
+        private bool isPathGenerated = false;
 
         public void Start()
         {
@@ -56,22 +57,23 @@ namespace Searching
             }
         }
         
-        public override void Hit()
+        public void Hit(Vector3 targetPosition)
         {
-            if (gameObject != null)
+            if (transform.position == targetPosition)
             {
-                camera.ShakeCamera(0.2f,0.3f);
-                int randomValue = Random.Range(0,100);
+                camera.ShakeCamera(0.2f, 0.3f);
+                int randomValue = Random.Range(0, 100);
+
                 if (randomValue < mapScript.player.hitchance)
                 {
-                    GameObject points = Instantiate(floatingPoints, transform.position, Quaternion.identity) as GameObject;
+                    GameObject points = Instantiate(floatingPoints, targetPosition, Quaternion.identity);
                     points.transform.GetChild(0).GetComponent<TextMesh>().text = mapScript.player.damage.ToString();
                     maxHealth -= mapScript.player.damage;
-                    Debug.Log("Enemy Health: " +maxHealth);
+                    Debug.Log("Enemy Health: " + maxHealth);
                 }
                 else
                 {
-                    GameObject points = Instantiate(floatingPoints, transform.position, Quaternion.identity) as GameObject;
+                    GameObject points = Instantiate(floatingPoints, targetPosition, Quaternion.identity);
                     TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
                     textMesh.text = "Miss";
                     textMesh.color = Color.green;
@@ -80,7 +82,7 @@ namespace Searching
 
                 if (mapScript.player.evasion > randomValue)
                 {
-                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity) as GameObject;
+                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity);
                     TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
                     textMesh.text = "Miss";
                     textMesh.color = Color.green;
@@ -88,13 +90,21 @@ namespace Searching
                 }
                 else
                 {
-                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity) as GameObject;
+                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity);
                     points.transform.GetChild(0).GetComponent<TextMesh>().text = damage.ToString();
                     this.Attack(mapScript.player);
                 }
-                CheckDead();
+                
+                if (this != null)
+                {
+                    CheckDead();
+                }
             }
         }
+
+
+
+
 
         public void Attack(OOPPlayer _player)
         {
@@ -106,11 +116,15 @@ namespace Searching
         {
             if (maxHealth <= 0)
             {
-                Debug.Log("Enemy kill");
+                Debug.Log("Enemy killed");
                 SetNode(transform.position, "empty");
                 Destroy(gameObject);
             }
         }
+
+
+
+
         public void CreatePath()
         {
             if (path.Count == 0 || path.Count == null)
@@ -144,31 +158,38 @@ namespace Searching
 
         private void GeneratePathToPlayer()
         {
-            Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-            Node endNode = AStarManager.instance.FindNearestNode(player.position);
-            path = AStarManager.instance.GeneratePath(startNode, endNode);
-            currentPathIndex = 0;
-            
-            CreatePath();
-            MoveOneStepTowardsPlayer();
+            if (player != null && !isPathGenerated)
+            {
+                Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                Node endNode = AStarManager.instance.FindNearestNode(player.position);
+        
+                path = AStarManager.instance.GeneratePath(startNode, endNode);
+                currentPathIndex = 0;
+                isPathGenerated = true;
+
+                CreatePath();
+                MoveOneStepTowardsPlayer();
+            }
         }
 
-        
         public void MoveOneStepTowardsPlayer()
         {
             if (currentPathIndex >= path.Count)
             {
-                GeneratePathToPlayer();
+                isPathGenerated = false;
+                return;
             }
             shouldMove = true;
         }
 
         private void MoveToPosition(float x, float y)
         {
-            Vector3 nextPo = new Vector3(x, y);
-            if (!HasPlacement(nextPo))
+            Vector2 oldPosition = new Vector2(transform.position.x, transform.position.y);
+            Vector2 newPosition = new Vector2(x, y);
+    
+            if (!HasPlacement(newPosition))
             {
-                if (IsEnemy(nextPo))
+                if (IsEnemy(newPosition))
                 {
                     path.RemoveAt(0);
                     Vector3 targetPosition = new Vector3(x, y, 0);
@@ -189,6 +210,23 @@ namespace Searching
                 SetNode(transform.position, "empty");
                 StartCoroutine(MoveSmoothly(targetPosition));
             }
+            
+            if (mapScript.enemies.ContainsKey(oldPosition))
+            {
+                mapScript.enemies[oldPosition].Remove(this);
+                if (mapScript.enemies[oldPosition].Count == 0)
+                {
+                    mapScript.enemies.Remove(oldPosition);
+                }
+            }
+            
+            if (!mapScript.enemies.ContainsKey(newPosition))
+            {
+                mapScript.enemies[newPosition] = new List<OOPEnemy>();
+            }
+            mapScript.enemies[newPosition].Add(this);
+            
         }
+
     }
 }

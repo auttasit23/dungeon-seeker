@@ -9,6 +9,7 @@ public class Node : MonoBehaviour
     public Node cameFrom;
     public List<Node> connections;
     public bool isWalkable = true;
+    public bool ItemPlaced = false;
     public Node previous;
 
     public float gScore;
