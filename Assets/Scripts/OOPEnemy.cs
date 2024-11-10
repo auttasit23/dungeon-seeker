@@ -24,6 +24,8 @@ namespace Searching
 
         public void Start()
         {
+            damage = damage * Mathf.Pow(1.5f, GameManager.level - 1);
+            health = health * Mathf.Pow(1.5f, GameManager.level - 1);
             playerObject = GameObject.FindGameObjectWithTag("Player");
             if (playerObject != null)
             {
@@ -70,8 +72,8 @@ namespace Searching
                 {
                     GameObject points = Instantiate(floatingPoints, targetPosition, Quaternion.identity);
                     points.transform.GetChild(0).GetComponent<TextMesh>().text = mapScript.player.damage.ToString();
-                    maxHealth -= mapScript.player.damage;
-                    Debug.Log("Enemy Health: " + maxHealth);
+                    health -= mapScript.player.damage;
+                    Debug.Log("Enemy Health: " + health);
                 }
                 else
                 {
@@ -112,7 +114,7 @@ namespace Searching
 
         protected override void CheckDead()
         {
-            if (maxHealth <= 0)
+            if (health <= 0)
             {
                 Debug.Log("Enemy killed");
                 Destroy(gameObject);

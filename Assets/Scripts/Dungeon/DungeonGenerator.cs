@@ -50,8 +50,8 @@ public class DungeonGenerator : MonoBehaviour
     //Room Data
     public enum RoomType { PlayerRoom, EnemyRoom, TreasureRoom, ExitRoom, Other }
     
-    [SerializeField] private int enemyRoomCount = 1;
-    [SerializeField] private int treasureRoomCount = 1;
+    [SerializeField] public int enemyRoomCount = 1;
+    [SerializeField] public int treasureRoomCount = 1;
 
     public List<BoundsInt> roomsList;
     public List<RoomType> roomTypes;

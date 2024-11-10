@@ -108,7 +108,6 @@ namespace Searching
             ClearNodes();
             CreateRooms();
             RemoveAllEnemies();
-            PlaceKey();
             GameObject enemy = GameObject.Find("Enemy");
 
             if (enemy != null)
@@ -118,12 +117,11 @@ namespace Searching
                     Destroy(child.gameObject);
                 }
             }
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.5f);
             PlaceEnemy();
-            //ย้ายผู้เล่นไปจุดเริ่มต้น
             PlacePlayer();
-            //ย้ายทางออก
             PlaceExit();
+            PlaceKey();
         }
         
         public Vector3 FindClosestNodePosition(Vector3 targetPosition)

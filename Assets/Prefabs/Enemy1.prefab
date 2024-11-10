@@ -147,7 +147,7 @@ MonoBehaviour:
   positionX: 0
   positionY: 0
   mapGenerator: {fileID: 0}
-  maxHealth: 30
+  health: 30
   damage: 2
   hitchance: 0
   evasion: 0

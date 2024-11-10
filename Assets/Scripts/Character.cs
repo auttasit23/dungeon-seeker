@@ -12,10 +12,10 @@ namespace Searching
     public class Character : Identity
     {
         [Header("Character")]
-        public int maxHealth;
-        public int damage;
-        public int hitchance;
-        public int evasion;
+        public float health;
+        public float damage;
+        public float hitchance;
+        public float evasion;
 
         protected bool isAlive;
         protected bool isFreeze;
@@ -28,7 +28,7 @@ namespace Searching
 
         protected void GetRemainEnergy()
         {
-            Debug.Log(Name + " : " + maxHealth);
+            Debug.Log(Name + " : " + health);
         }
 
         public virtual void Move(Vector2 direction)
@@ -92,7 +92,6 @@ namespace Searching
                 }
                 else if (IsExit(targetPosition))
                 {
-                    Debug.Log("Exit");
                     if (mapScript.Exit != null)
                     {
                         mapScript.Exit.Hit();
@@ -246,18 +245,18 @@ namespace Searching
         }*/
         
         
-        public virtual void TakeDamage(int Damage)
+        public virtual void TakeDamage(float Damage)
         {
-            maxHealth -= Damage;
-            Debug.Log(Name + " Current Energy : " + maxHealth);
+            health -= Damage;
+            Debug.Log(Name + " Current Energy : " + health);
             CheckDead();
         }
         public virtual void TakeDamage(int Damage, bool freeze)
         {
-            maxHealth -= Damage;
+            health -= Damage;
             isFreeze = freeze;
             GetComponent<SpriteRenderer>().color = Color.blue;
-            Debug.Log(Name + " Current Energy : " + maxHealth);
+            Debug.Log(Name + " Current Energy : " + health);
             Debug.Log("you is Freeze");
             CheckDead();
         }
@@ -279,6 +278,10 @@ namespace Searching
 
 
 
+        public void FullHeal()
+        {
+            health = mapScript.player.maxHealth;
+        }
         public void Heal(int healPoint)
         {
             // energy += healPoint;
@@ -289,13 +292,13 @@ namespace Searching
 
         public void Heal(int healPoint, bool Bonuse)
         {
-            maxHealth += healPoint * (Bonuse ? 2 : 1);
-            Debug.Log("Current Energy : " + maxHealth);
+            health += healPoint * (Bonuse ? 2 : 1);
+            Debug.Log("Current Energy : " + health);
         }
 
         protected virtual void CheckDead()
         {
-            if (maxHealth <= 0)
+            if (health <= 0)
             {
                 Destroy(gameObject);
             }

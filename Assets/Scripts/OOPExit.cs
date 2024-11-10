@@ -15,10 +15,22 @@ namespace Searching
         {
             if (mapGenerator.player.inventory.numberOfItem(unlockKey) > 0)
             {
-                Debug.Log("Exit unlocked");
-                mapGenerator.player.enabled = false;
-                YouWin.SetActive(true);
-                Debug.Log("You win");
+                mapGenerator.player.FullHeal();
+                if (GameManager.level >= 3)
+                {
+                    Debug.Log("Exit unlocked");
+                    mapGenerator.player.enabled = false;
+                    YouWin.SetActive(true);
+                    Debug.Log("You win");
+                }
+                else
+                {
+                    mapGenerator.enemyRoomCount += 1;
+                    GameManager.level += 1;
+                    mapGenerator.player.inventory.UseItem(unlockKey);
+                    StartCoroutine(mapGenerator.ResetMap());
+                    Debug.Log("Level " + GameManager.level);
+                }
             }
             else
             {

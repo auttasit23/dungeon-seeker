@@ -12,10 +12,12 @@ namespace Searching
         public Inventory inventory;
         public float moveCooldown = 0.5f;
         private float moveCooldownTimer = 0f;
+        public float maxHealth;
         public void Start()
         {
             PrintInfo();
             GetRemainEnergy();
+            maxHealth = health;
             mapScript = FindObjectOfType<OOPMapGenerator>();
             if (mapScript == null)
             {
@@ -64,7 +66,7 @@ namespace Searching
         protected override void CheckDead()
         {
             base.CheckDead();
-            if (maxHealth <= 0)
+            if (health <= 0)
             {
                 Debug.Log("Player is Dead");
             }
