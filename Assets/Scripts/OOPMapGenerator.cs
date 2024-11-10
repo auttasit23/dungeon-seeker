@@ -25,9 +25,10 @@ namespace Searching
         [Header("Set Transform")]
         public Transform itemParent;
         public Transform enemyParent;
-
-        public OOPItemPotion[,] potions;
+        public Transform potionParent;
+        
         public OOPItemKey keys;
+        public Dictionary<Vector2, List<OOPItemPotion>> potion = new Dictionary<Vector2, List<OOPItemPotion>>();
         public Dictionary<Vector2, List<OOPEnemy>> enemies = new Dictionary<Vector2, List<OOPEnemy>>();
         Dictionary<Vector2, Node> nodes = new Dictionary<Vector2, Node>();
 
@@ -40,6 +41,7 @@ namespace Searching
             PlacePlayer();
             PlaceExit();
             PlaceKey();
+            PlacePotion();
         }
         
         private void Update()
@@ -63,6 +65,16 @@ namespace Searching
                     if (childnode.transform.position == childenemy.transform.position)
                     {
                         nodeS.onMe = "enemy";
+                        isOccupied = true;
+                        break;
+                    }
+                }
+                
+                foreach (Transform childitem in potionParent)
+                {
+                    if (childnode.transform.position == childitem.transform.position)
+                    {
+                        nodeS.onMe = "potion";
                         isOccupied = true;
                         break;
                     }
@@ -122,6 +134,7 @@ namespace Searching
             PlacePlayer();
             PlaceExit();
             PlaceKey();
+            PlacePotion();
         }
         
         public Vector3 FindClosestNodePosition(Vector3 targetPosition)
@@ -301,7 +314,7 @@ namespace Searching
 
 
 
-        public void PlaceItem(int x, int y)
+        /*public void PlaceItem(int x, int y)
         {
             int r = Random.Range(0, itemsPrefab.Length);
             GameObject obj = Instantiate(itemsPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
@@ -321,7 +334,7 @@ namespace Searching
                 {
                     node.isWalkable = false; // Mark the node as unwalkable
                 }
-            }*/
+            }#1#
             /*Vector2 position = new Vector2(x, y);
             if (nodes.ContainsKey(position))
             {
@@ -331,8 +344,8 @@ namespace Searching
                     Destroy(node);
                     nodes.Remove(position);
                 }
-            }*/
-        }
+            }#1#
+        }*/
         public void PlacePlayer()
         {
             for (int i = 0; i < roomsList.Count; i++)
@@ -381,6 +394,38 @@ namespace Searching
                     if (spriteRenderer != null)
                     {
                         spriteRenderer.sortingOrder = 1;
+                    }
+                }
+            }
+        }
+        
+        public void PlacePotion()
+        {
+            for (int i = 0; i < roomsList.Count; i++)
+            {
+                if (roomTypes[i] == RoomType.Other)
+                {
+                    Vector3 randomPo = (Vector3)roomsList[i].center;
+                    for (int j = 0; j < 1; j++)
+                    {
+                        Vector2 closestNodePosition = FindClosestNodePosition(randomPo);
+                        Vector3 position = new Vector3(closestNodePosition.x, closestNodePosition.y, 0);
+
+                        GameObject obj = Instantiate(itemsPrefab[1], position, Quaternion.identity);
+                        obj.transform.parent = potionParent;
+
+                        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                        if (spriteRenderer != null)
+                        {
+                            spriteRenderer.sortingOrder = 1;
+                        }
+                        OOPItemPotion itemPotion = obj.GetComponent<OOPItemPotion>();
+                        Vector2 key = new Vector2(closestNodePosition.x, closestNodePosition.y);
+                        if (!potion.ContainsKey(key))
+                        {
+                            potion[key] = new List<OOPItemPotion>();
+                        }
+                        potion[key].Add(itemPotion);
                     }
                 }
             }

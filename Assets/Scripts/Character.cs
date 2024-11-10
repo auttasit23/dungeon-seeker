@@ -80,6 +80,15 @@ namespace Searching
                         return; 
                     }
                 }
+                else if (IsPotion(targetPosition))
+                {
+                    List<OOPItemPotion> potionAtTargetPosition = mapScript.potion[new Vector2(positionX, positionY)];
+                    foreach (var potion in potionAtTargetPosition)
+                    {
+                        potion.Hit();
+                        StartCoroutine(MoveSmoothly(targetPosition)); 
+                    }
+                }
                 else if (IsKey(targetPosition))
                 {
                     if (mapScript.keys != null)
@@ -156,6 +165,16 @@ namespace Searching
         {
             Vector2 targetKey = new Vector2(position.x, position.y);
             if (mapScript.enemies.ContainsKey(targetKey) && mapScript.enemies[targetKey].Count > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+        
+        public bool IsPotion(Vector3 position)
+        {
+            Vector2 targetKey = new Vector2(position.x, position.y);
+            if (mapScript.potion.ContainsKey(targetKey) && mapScript.potion[targetKey].Count > 0)
             {
                 return true;
             }
@@ -280,18 +299,13 @@ namespace Searching
         {
             health = mapScript.player.maxHealth;
         }
-        public void Heal(int healPoint)
-        {
-            // energy += healPoint;
-            // Debug.Log("Current Energy : " + energy);
-            // เราสามารถเรียกใช้ฟังก์ชัน Heal โดยกำหนดให้ Bonuse = false ได้ เพื่อที่จะให้ logic ในการ heal อยู่ที่ฟังก์ชัน Heal อันเดียวและไม่ต้องเขียนซ้ำ
-            Heal(healPoint, false);
-        }
 
-        public void Heal(int healPoint, bool Bonuse)
+        public void Heal(float healPercentage)
         {
-            health += healPoint * (Bonuse ? 2 : 1);
-            Debug.Log("Current Energy : " + health);
+            int healAmount = Mathf.RoundToInt(mapScript.player.maxHealth * (healPercentage / 100f));
+            
+            health += healAmount;
+            health = Mathf.Clamp(health, 0, mapScript.player.maxHealth);
         }
 
         protected virtual void CheckDead()

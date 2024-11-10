@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,6 +18,15 @@ namespace Searching
         public void PrintInfo()
         {
             Debug.Log("tell me your " + Name);
+        }
+
+        private void Start()
+        {
+            mapGenerator = FindObjectOfType<OOPMapGenerator>();
+            if (mapGenerator == null)
+            {
+                Debug.LogError("OOPMapGenerator not found in the scene!");
+            }
         }
 
         public virtual void Hit()
