@@ -14,6 +14,7 @@ namespace Searching
         public float positionY;
 
         public OOPMapGenerator mapGenerator;
+        public OOPEnemy enemy;
 
         public void PrintInfo()
         {

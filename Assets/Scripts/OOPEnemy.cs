@@ -19,7 +19,6 @@ namespace Searching
         private bool shouldMove = false;
         
         public CameraFollow camera;
-        public GameObject floatingPoints;
         private bool isPathGenerated = false;
 
         public void Start()
@@ -71,7 +70,7 @@ namespace Searching
                 if (randomValue < mapScript.player.hitchance)
                 {
                     GameObject points = Instantiate(floatingPoints, targetPosition, Quaternion.identity);
-                    points.transform.GetChild(0).GetComponent<TextMesh>().text = mapScript.player.damage.ToString();
+                    points.transform.GetChild(0).GetComponent<TextMesh>().text = mapScript.player.damage.ToString("F0");
                     health -= mapScript.player.damage;
                     Debug.Log("Enemy Health: " + health);
                 }
@@ -95,7 +94,7 @@ namespace Searching
                 else
                 {
                     GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity);
-                    points.transform.GetChild(0).GetComponent<TextMesh>().text = damage.ToString();
+                    points.transform.GetChild(0).GetComponent<TextMesh>().text = damage.ToString("F0");
                     this.Attack(mapScript.player);
                 }
                 

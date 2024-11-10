@@ -20,6 +20,7 @@ namespace Searching
         private bool isMoving = false;
         
         public OOPMapGenerator mapScript;
+        public GameObject floatingPoints;
 
 
         // Start is called before the first frame update
@@ -303,9 +304,12 @@ namespace Searching
         public void Heal(float healPercentage)
         {
             int healAmount = Mathf.RoundToInt(mapScript.player.maxHealth * (healPercentage / 100f));
-            
+            GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity);
+            TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
             health += healAmount;
             health = Mathf.Clamp(health, 0, mapScript.player.maxHealth);
+            textMesh.text = healAmount.ToString("F0");
+            textMesh.color = Color.green;
         }
 
         protected virtual void CheckDead()

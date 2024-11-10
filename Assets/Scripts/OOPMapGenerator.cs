@@ -522,6 +522,18 @@ namespace Searching
                 }
             }
             enemies.Clear();
+            
+            foreach (var potionList in potion.Values)
+            {
+                foreach (var potion in potionList)
+                {
+                    if (potion != null)
+                    {
+                        Destroy(potion.gameObject);
+                    }
+                }
+            }
+            enemies.Clear();
         }
     }
 }
