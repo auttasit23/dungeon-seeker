@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
 [System.Serializable]
@@ -16,9 +17,10 @@ public class ItemData
     }
     public int MinQuantity;
     public int MaxQuantity;
-    public GameObject Item;
+    public TileBase Item;
     public PlacementType Placement;
 }
+
 
 
 public class DungeonGenerator : MonoBehaviour
@@ -56,7 +58,7 @@ public class DungeonGenerator : MonoBehaviour
     public List<BoundsInt> roomsList;
     public List<RoomType> roomTypes;
     public HashSet<Vector2Int> floor;
-    
+
     public void CreateRooms()
     {
         roomsList = ProceduralGenerationAlgorithms.BinarySpacePartitioning(new BoundsInt((Vector3Int)startPosition, new Vector3Int(dungeonWidth, dungeonHeight, 0)), minRoomWidth, minRoomHeight);
@@ -174,8 +176,8 @@ public class DungeonGenerator : MonoBehaviour
                         if ((item.Placement == ItemData.PlacementType.InOpenArea && isSurrounded) ||
                             (item.Placement == ItemData.PlacementType.NearWall && !isSurrounded))
                         {
-                            GameObject itemObject = Instantiate(item.Item, new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
-                            itemObject.transform.parent = nodesParent;
+                            tilemapVisualizer.PaintSingleTile(tilemapVisualizer.itemTileMap, item.Item, position);
+                        
                             nodes[position].ItemPlaced = true;
                             itemPlaced = true;
                         }
@@ -184,6 +186,7 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
+    
 
 
     
