@@ -39,11 +39,14 @@ namespace Searching
             {
                 Debug.LogError("CameraFollow not found in the scene!");
             }
+            if (AStarManager.instance != null)
+            {
+                GeneratePathToPlayer();
+                Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                currentNode = startNode;
+            }
             GetRemainEnergy();
             GeneratePathToPlayer();
-
-            Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-            currentNode = startNode;
         }
 
         private void Update()
@@ -59,11 +62,10 @@ namespace Searching
         
         public void Hit(Vector3 targetPosition)
         {
-            if (transform.position == targetPosition)
+            if (this != null && transform.position == targetPosition)
             {
                 camera.ShakeCamera(0.2f, 0.3f);
                 int randomValue = Random.Range(0, 100);
-
                 if (randomValue < mapScript.player.hitchance)
                 {
                     GameObject points = Instantiate(floatingPoints, targetPosition, Quaternion.identity);
@@ -101,10 +103,7 @@ namespace Searching
                 }
             }
         }
-
-
-
-
+        
 
         public void Attack(OOPPlayer _player)
         {
@@ -117,14 +116,10 @@ namespace Searching
             if (maxHealth <= 0)
             {
                 Debug.Log("Enemy killed");
-                SetNode(transform.position, "empty");
                 Destroy(gameObject);
             }
         }
-
-
-
-
+        
         public void CreatePath()
         {
             if (path.Count == 0 || path.Count == null)
@@ -163,8 +158,15 @@ namespace Searching
             {
                 Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                 Node endNode = AStarManager.instance.FindNearestNode(player.position);
-        
+
                 path = AStarManager.instance.GeneratePath(startNode, endNode);
+
+                if (path == null || path.Count == 0)
+                {
+                    Debug.LogError("Failed to generate path to player.");
+                    return;
+                }
+
                 currentPathIndex = 0;
                 isPathGenerated = true;
 
@@ -172,6 +174,7 @@ namespace Searching
                 MoveOneStepTowardsPlayer();
             }
         }
+
 
         public void MoveOneStepTowardsPlayer()
         {
@@ -187,21 +190,75 @@ namespace Searching
         {
             Vector2 oldPosition = new Vector2(transform.position.x, transform.position.y);
             Vector2 newPosition = new Vector2(x, y);
-    
-            if (!HasPlacement(newPosition))
+            
+            if (IsPlayer(newPosition))
             {
-                GeneratePathToPlayer();
-                path.RemoveAt(0);
                 return;
+            }
+            
+            if (HasPlacement(oldPosition))
+            {
+                if (IsEnemy(oldPosition))
+                {
+                    if (IsEnemy(newPosition) && oldPosition == newPosition)
+                    {
+                        path.RemoveAt(0);
+                    }
+                }
+            }
+            
+            if (HasPlacement(newPosition))
+            {
+                if (IsEnemy(newPosition) && newPosition != oldPosition)
+                {
+                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
+        
+                    path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    StartCoroutine(MoveSmoothly(path[0].transform.position));
+                    return;
+                }
+                if (!IsEnemy(newPosition))
+                {
+                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
+        
+                    path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    StartCoroutine(MoveSmoothly(path[0].transform.position));
+                    return;
+                }
             }
             else
             {
                 path.RemoveAt(0);
-                Vector3 targetPosition = new Vector3(x, y, 0);
-                SetNode(targetPosition, "enemy");
-                SetNode(transform.position, "empty");
-                StartCoroutine(MoveSmoothly(targetPosition));
+                StartCoroutine(MoveSmoothly(newPosition));
             }
+
+            /*if (!HasPlacement(oldPosition))
+            {
+                if (IsEnemy(oldPosition))
+                {
+                    if (IsEnemy(newPosition))
+                    {
+                        return; 
+                    }
+                    else
+                    {
+                        path.RemoveAt(0);
+                        SetNode(newPosition, "enemy");
+                        SetNode(transform.position, "empty");
+                        StartCoroutine(MoveSmoothly(newPosition));
+                    }
+                }
+            }
+            else
+            {
+                path.RemoveAt(0);
+                SetNode(newPosition, "enemy");
+                SetNode(transform.position, "empty");
+                StartCoroutine(MoveSmoothly(newPosition));
+            }*/
+            
             
             if (mapScript.enemies.ContainsKey(oldPosition))
             {
@@ -217,8 +274,6 @@ namespace Searching
                 mapScript.enemies[newPosition] = new List<OOPEnemy>();
             }
             mapScript.enemies[newPosition].Add(this);
-            
         }
-
     }
 }

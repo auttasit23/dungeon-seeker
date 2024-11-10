@@ -43,13 +43,8 @@ public class AStarManager : MonoBehaviour
             {
                 return ReconstructPath(start, end);
             }
-
             foreach (Node neighbor in currentNode.connections)
             {
-                /*if (!neighbor.isWalkable)
-                {
-                    continue;
-                }*/
 
                 float tentativeGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, neighbor.transform.position);
                 if (tentativeGScore < neighbor.gScore)
@@ -65,11 +60,11 @@ public class AStarManager : MonoBehaviour
                 }
             }
         }
-
-        return null; 
+        
+        return null;
     }
 
-
+    
 
     private List<Node> ReconstructPath(Node start, Node end)
     {

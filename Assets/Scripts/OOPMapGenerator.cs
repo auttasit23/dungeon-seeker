@@ -67,6 +67,45 @@ namespace Searching
             {
                 SceneManager.LoadScene("Map");
             }
+            
+            foreach (Transform childnode in nodesParent)
+            {
+                Node nodeS = childnode.GetComponent<Node>();
+                bool isOccupied = false;
+                
+                foreach (Transform childenemy in enemyParent)
+                {
+                    if (childnode.transform.position == childenemy.transform.position)
+                    {
+                        nodeS.onMe = "enemy";
+                        isOccupied = true;
+                        break;
+                    }
+                }
+
+                if (player != null)
+                {
+                    if (childnode.transform.position == player.transform.position)
+                    {
+                        nodeS.onMe = "player";
+                        isOccupied = true;
+                    }
+                }
+
+                if (Exit != null)
+                {
+                    if (childnode.transform.position == Exit.transform.position)
+                    {
+                        nodeS.onMe = "exit";
+                        isOccupied = true;
+                    }
+                }
+
+                if (!isOccupied)
+                {
+                    nodeS.onMe = "empty";
+                }
+            }
         }
         
         public IEnumerator ResetMap()
@@ -310,7 +349,6 @@ namespace Searching
                     Vector3 roomCenter = (Vector3)roomsList[i].center;
                     Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
                     player.transform.position = closestNodePosition;
-                    SetNode(closestNodePosition, "player");
                     player.positionX = closestNodePosition.x;
                     player.positionY = closestNodePosition.y;
                     break;
@@ -327,7 +365,6 @@ namespace Searching
                     Vector3 roomCenter = (Vector3)roomsList[i].center;
                     Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
                     Exit.transform.position = new Vector3(closestNodePosition.x, closestNodePosition.y, 0);
-                    SetNode(closestNodePosition, "exit");
                     break;
                 }
             }
@@ -357,9 +394,10 @@ namespace Searching
                     for (int j = 0; j < maxEnemy; j++)
                     {
                         Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
-                        Vector3 position = new Vector3(closestNodePosition.x, closestNodePosition.y, -1);
+                        Vector3 position = new Vector3(closestNodePosition.x, closestNodePosition.y, 0);
 
                         int r = Random.Range(0, enemiesPrefab.Length);
+                        SetNode(closestNodePosition, "enemy");
                         GameObject obj = Instantiate(enemiesPrefab[r], position, Quaternion.identity);
                         obj.transform.parent = enemyParent;
 
@@ -379,8 +417,7 @@ namespace Searching
                             enemies[key] = new List<OOPEnemy>();
                         }
                         enemies[key].Add(enemyComponent);
-
-                        SetNode(position, "enemy");
+                        
                     }
                 }
             }

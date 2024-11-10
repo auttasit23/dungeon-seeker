@@ -28,13 +28,33 @@ public class Node : MonoBehaviour
         {
             return;
         }
-        if (connections.Count > 0)
+        
+        if (onMe == "player")
+        {
+            Gizmos.color = Color.cyan;
+        }
+        
+        else if (onMe == "exit")
+        {
+            Gizmos.color = Color.green;
+        }
+        
+        else if (onMe == "enemy")
+        {
+            Gizmos.color = Color.magenta;
+        }
+        else
         {
             Gizmos.color = Color.blue;
-            for(int i = 0; i < connections.Count; i++)
+        }
+        
+        if (connections.Count > 0)
+        {
+            for (int i = 0; i < connections.Count; i++)
             {
                 Gizmos.DrawLine(transform.position, connections[i].transform.position);
             }
         }
     }
+
 }

@@ -69,11 +69,11 @@ namespace Searching
             positionY = toY;
             Vector3 targetPosition = new Vector3(positionX, positionY, 0);
             Vector3 currentPosition = new Vector3(fromX, fromY, 0);
-            if (!HasPlacement(targetPosition))
+            if (HasPlacement(targetPosition))
             {
                 if (IsEnemy(targetPosition))
                 {
-                    List<OOPEnemy> enemiesAtTargetPosition = mapGenerator.enemies[new Vector2(positionX, positionY)];
+                    List<OOPEnemy> enemiesAtTargetPosition = mapScript.enemies[new Vector2(positionX, positionY)];
                     foreach (var enemy in enemiesAtTargetPosition)
                     {
                         enemy.Hit(targetPosition);
@@ -96,7 +96,7 @@ namespace Searching
                 StartCoroutine(MoveSmoothly(targetPosition));
                 TakeDamage(1);
             }
-            mapGenerator.MoveEnemies();
+            mapScript.MoveEnemies();
         }
         
         
@@ -127,7 +127,7 @@ namespace Searching
         
                 if (nodeS != null)
                 {
-                    if (nodeS.onMe == "empty")
+                    if (nodeS.onMe != "empty")
                     {
                         return true;
                     }
@@ -142,12 +142,6 @@ namespace Searching
 
         public bool IsEnemy(Vector3 position)
         {
-            if (mapScript == null)
-            {
-                Debug.LogError("mapGenerator is not assigned.");
-                return false;
-            }
-
             Vector2 targetKey = new Vector2(position.x, position.y);
             if (mapScript.enemies.ContainsKey(targetKey) && mapScript.enemies[targetKey].Count > 0)
             {
@@ -155,6 +149,19 @@ namespace Searching
             }
             return false;
         }
+        
+        public bool IsPlayer(Vector3 position)
+        {
+            if (mapScript.player.transform.position == position)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
 
 
         /*public bool IsPotion(int x, int y)
