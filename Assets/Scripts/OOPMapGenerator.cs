@@ -26,24 +26,9 @@ namespace Searching
         public Transform itemParent;
         public Transform enemyParent;
 
-        [Header("Set object Count")]
-        public int itemCount;
-        public int itemKeyCount;
-        public int enemyCount;
-        
-        
         public OOPItemPotion[,] potions;
-        public OOPItemKey[,] keys;
+        public OOPItemKey keys;
         public Dictionary<Vector2, List<OOPEnemy>> enemies = new Dictionary<Vector2, List<OOPEnemy>>();
-
-        // block types ...
-        [Header("Block Types")]
-        public int playerBlock = 99;
-        public int empty = 0;
-        public int potion = 2;
-        public int exit = 4;
-        public int key = 5;
-        public int enemy = 6;
         Dictionary<Vector2, Node> nodes = new Dictionary<Vector2, Node>();
 
         // Start is called before the first frame update
@@ -51,10 +36,10 @@ namespace Searching
         void Start()
         {
             CreateRooms();
-            Vector3 randomPos = RandomNode();
             PlaceEnemy();
             PlacePlayer();
             PlaceExit();
+            PlaceKey();
         }
         
         private void Update()
@@ -100,6 +85,15 @@ namespace Searching
                         isOccupied = true;
                     }
                 }
+                
+                if (keys != null)
+                {
+                    if (childnode.transform.position == keys.transform.position)
+                    {
+                        nodeS.onMe = "key";
+                        isOccupied = true;
+                    }
+                }
 
                 if (!isOccupied)
                 {
@@ -114,6 +108,7 @@ namespace Searching
             ClearNodes();
             CreateRooms();
             RemoveAllEnemies();
+            PlaceKey();
             GameObject enemy = GameObject.Find("Enemy");
 
             if (enemy != null)
@@ -365,22 +360,32 @@ namespace Searching
                     Vector3 roomCenter = (Vector3)roomsList[i].center;
                     Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
                     Exit.transform.position = new Vector3(closestNodePosition.x, closestNodePosition.y, 0);
+                    Exit.positionX = closestNodePosition.x;
+                    Exit.positionY = closestNodePosition.y;
                     break;
                 }
             }
         }
 
-        public void PlaceKey(int x, int y)
+        public void PlaceKey()
         {
-            int r = Random.Range(0, keysPrefab.Length);
-            GameObject obj = Instantiate(keysPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-            obj.transform.parent = itemParent;
-            Vector2 position = new Vector2(x, y);
-            keys[x, y] = obj.GetComponent<OOPItemKey>();
-            keys[x, y].positionX = x;
-            keys[x, y].positionY = y;
-            keys[x, y].mapGenerator = this;
-            obj.name = $"Item_{keys[x, y].Name} {x}, {y}";
+            for (int i = 0; i < roomsList.Count; i++)
+            {
+                if (roomTypes[i] == RoomType.TreasureRoom)
+                {
+                    Vector3 roomCenter = (Vector3)roomsList[i].center;
+
+                    Vector2 closestNodePosition = FindClosestNodePosition(roomCenter);
+                    GameObject obj = Instantiate(keysPrefab[0], closestNodePosition, Quaternion.identity);
+                    obj.transform.parent = itemParent;
+                    keys = obj.GetComponent<OOPItemKey>();
+                    SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                    if (spriteRenderer != null)
+                    {
+                        spriteRenderer.sortingOrder = 1;
+                    }
+                }
+            }
         }
 
         public void PlaceEnemy()

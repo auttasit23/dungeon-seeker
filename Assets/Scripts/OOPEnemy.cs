@@ -107,7 +107,6 @@ namespace Searching
 
         public void Attack(OOPPlayer _player)
         {
-            damage = 5;
             _player.TakeDamage(damage);
         }
 
@@ -130,9 +129,13 @@ namespace Searching
             
             if (path.Count > 0 || path == null)
             {
-                Node nextNode = path[0];
-                currentNode = nextNode;
-                MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
+                int randomValue = Random.Range(0, 100);
+                if (randomValue < 50)
+                {
+                    Node nextNode = path[0];
+                    currentNode = nextNode;
+                    MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
+                }
 
             }
         }

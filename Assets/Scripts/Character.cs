@@ -82,6 +82,23 @@ namespace Searching
                         return; 
                     }
                 }
+                else if (IsKey(targetPosition))
+                {
+                    if (mapScript.keys != null)
+                    {
+                        mapScript.keys.Hit();
+                        StartCoroutine(MoveSmoothly(targetPosition));
+                    }
+                }
+                else if (IsExit(targetPosition))
+                {
+                    Debug.Log("Exit");
+                    if (mapScript.Exit != null)
+                    {
+                        mapScript.Exit.Hit();
+                        StartCoroutine(MoveSmoothly(targetPosition));
+                    }
+                }
                 else
                 {
                     positionX -= direction.x;
@@ -91,8 +108,6 @@ namespace Searching
             }
             else
             {
-                SetNode(targetPosition, "player");
-                SetNode(currentPosition, "empty");
                 StartCoroutine(MoveSmoothly(targetPosition));
                 TakeDamage(1);
             }
@@ -152,9 +167,54 @@ namespace Searching
         
         public bool IsPlayer(Vector3 position)
         {
-            if (mapScript.player.transform.position == position)
+            if (mapScript.player != null)
             {
-                return true;
+                if (mapScript.player.transform.position == position)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        public bool IsKey(Vector3 position)
+        {
+            if (mapScript.keys != null)
+            {
+                if (mapScript.keys.transform.position == position)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        public bool IsExit(Vector3 position)
+        {
+            if (mapScript.Exit != null)
+            {
+                if (mapScript.Exit.transform.position == position)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
