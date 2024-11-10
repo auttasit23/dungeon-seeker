@@ -5,11 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 public class UIInventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [SerializeField] private Image itemImage;
-    [SerializeField] private TMP_Text quantityText;
+    [SerializeField] public Image itemImage;
+    [SerializeField] public TMP_Text quantityText;
     [SerializeField] private Image borderImage;
 
-    public event Action<UIInventoryItem> OnItemClicked, OnItemDropped;
+    public event Action<UIInventoryItem> OnItemClicked, OnItemDropped, OnItemRightClicked;
     public bool isEmpty = true;
     private Transform originalParent;
     private CanvasGroup canvasGroup;
@@ -35,7 +35,10 @@ public class UIInventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         quantityText.text = quantity.ToString();
         isEmpty = false;
     }
-
+    public void Select()
+    {
+        borderImage.enabled = true;
+    }
     public void Deselect()
     {
         borderImage.enabled = false;
@@ -75,5 +78,12 @@ public class UIInventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         // Return to original position if not dropped on a valid target slot
         transform.localPosition = Vector3.zero;
+    }
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right && !isEmpty)
+        {
+            OnItemRightClicked?.Invoke(this); // Trigger right-click action
+        }
     }
 }
