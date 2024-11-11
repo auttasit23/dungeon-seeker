@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,21 @@ public class AStarManager : MonoBehaviour
     private void Awake()
     {
         instance = this;
+    }
+
+    private void Start()
+    {
+        ResetNodeValues();
+    }
+
+    public void ResetNodeValues()
+    {
+        foreach (Node n in FindObjectsOfType<Node>())
+        {
+            n.gScore = float.MaxValue;
+            n.onMe = "empty";
+            n.previous = null;
+        }
     }
 
     public List<Node> GeneratePath(Node start, Node end)
@@ -45,20 +61,23 @@ public class AStarManager : MonoBehaviour
             }
             foreach (Node neighbor in currentNode.connections)
             {
-
-                float tentativeGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, neighbor.transform.position);
-                if (tentativeGScore < neighbor.gScore)
+                if (neighbor.onMe != null && neighbor.onMe.Equals("empty") || neighbor.onMe != null && neighbor.onMe.Equals("player"))
                 {
-                    neighbor.gScore = tentativeGScore;
-                    neighbor.hScore = Vector2.Distance(neighbor.transform.position, end.transform.position);
-                    neighbor.previous = currentNode;
-
-                    if (!openSet.Contains(neighbor))
+                    float tentativeGScore = currentNode.gScore + Vector2.Distance(currentNode.transform.position, neighbor.transform.position);
+                    if (tentativeGScore < neighbor.gScore)
                     {
-                        openSet.Add(neighbor);
+                        neighbor.gScore = tentativeGScore;
+                        neighbor.hScore = Vector2.Distance(neighbor.transform.position, end.transform.position);
+                        neighbor.previous = currentNode;
+
+                        if (!openSet.Contains(neighbor))
+                        {
+                            openSet.Add(neighbor);
+                        }
                     }
                 }
             }
+
         }
         
         return null;

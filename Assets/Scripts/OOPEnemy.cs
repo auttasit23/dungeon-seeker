@@ -20,6 +20,17 @@ namespace Searching
         
         public CameraFollow camera;
         private bool isPathGenerated = false;
+        
+        IEnumerator StartAfterSceneLoad()
+        {
+            yield return new WaitForSeconds(0.1f);
+            CreatePath();
+        }
+
+        void OnEnable()
+        {
+            StartCoroutine(StartAfterSceneLoad());
+        }
 
         public void Start()
         {
@@ -47,8 +58,8 @@ namespace Searching
                 currentNode = startNode;
             }
             GetRemainEnergy();
-            GeneratePathToPlayer();
         }
+        
 
         private void Update()
         {
@@ -122,10 +133,14 @@ namespace Searching
         
         public void CreatePath()
         {
-            if (path.Count == 0 || path.Count == null)
+            if (path != null && path.Count == 0)
             {
                 isPathGenerated = false;
                 GeneratePathToPlayer();
+            }
+            else if (path == null)
+            {
+                Debug.LogWarning("Path is null. No path could be generated.");
             }
             
             if (path.Count > 0 || path == null)
@@ -213,21 +228,49 @@ namespace Searching
             
             if (HasPlacement(newPosition))
             {
+                if (IsPotion(newPosition))
+                {
+                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
+        
+                    path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    path.RemoveAt(0);
+                    StartCoroutine(MoveSmoothly(path[0].transform.position));
+                    return;
+                }
+                if (IsExit(newPosition))
+                {
+                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
+        
+                    path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    path.RemoveAt(0);
+                    StartCoroutine(MoveSmoothly(path[0].transform.position));
+                    return;
+                }
+                if (IsKey(newPosition))
+                {
+                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
+        
+                    path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    path.RemoveAt(0);
+                    StartCoroutine(MoveSmoothly(path[0].transform.position));
+                    return;
+                }
                 if (IsEnemy(newPosition) && newPosition != oldPosition)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
         
                     path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    path.RemoveAt(0);
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
                 if (!IsEnemy(newPosition))
                 {
-                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
-        
-                    path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    path.RemoveAt(0);
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }

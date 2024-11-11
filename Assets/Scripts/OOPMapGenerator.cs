@@ -11,7 +11,6 @@ namespace Searching
     {
         [Header("Set Player")]
         public OOPPlayer player;
-        public Vector2Int playerStartPos;
         public int maxEnemy = 1;
 
         [Header("Set Exit")]
@@ -65,16 +64,6 @@ namespace Searching
                     if (childnode.transform.position == childenemy.transform.position)
                     {
                         nodeS.onMe = "enemy";
-                        isOccupied = true;
-                        break;
-                    }
-                }
-                
-                foreach (Transform childitem in potionParent)
-                {
-                    if (childnode.transform.position == childitem.transform.position)
-                    {
-                        nodeS.onMe = "potion";
                         isOccupied = true;
                         break;
                     }
@@ -169,8 +158,6 @@ namespace Searching
                 return Vector3.negativeInfinity;
             }
         }
-
-
         public Vector3 FindLowestNodePosition()
         {
             if (nodesParent == null)
@@ -208,9 +195,6 @@ namespace Searching
                 return Vector3.negativeInfinity;
             }
         }
-
-
-
         public Vector3 FindHighestNodePosition()
         {
             if (nodesParent == null)
@@ -248,7 +232,6 @@ namespace Searching
                 return Vector3.negativeInfinity;
             }
         }
-        
         public Vector3 RandomNode()
         {
             if (nodesParent == null)
@@ -311,41 +294,7 @@ namespace Searching
 
             return null;
         }
-
-
-
-        /*public void PlaceItem(int x, int y)
-        {
-            int r = Random.Range(0, itemsPrefab.Length);
-            GameObject obj = Instantiate(itemsPrefab[r], new Vector3(x, y, 0), Quaternion.identity);
-            obj.transform.parent = itemParent;
-            Vector2 position = new Vector2(x, y);
-            potions[x, y] = obj.GetComponent<OOPItemPotion>();
-            potions[x, y].positionX = x;
-            potions[x, y].positionY = y;
-            potions[x, y].mapGenerator = this;
-            obj.name = $"Item_{potions[x, y].Name} {x}, {y}";
-            
-            /*Vector2 position = new Vector2(x, y);
-            if (nodes.ContainsKey(position))
-            {
-                Node node = nodes[position];
-                if (node != null)
-                {
-                    node.isWalkable = false; // Mark the node as unwalkable
-                }
-            }#1#
-            /*Vector2 position = new Vector2(x, y);
-            if (nodes.ContainsKey(position))
-            {
-                Node node = nodes[position];
-                if (node != null)
-                {
-                    Destroy(node);
-                    nodes.Remove(position);
-                }
-            }#1#
-        }*/
+        
         public void PlacePlayer()
         {
             for (int i = 0; i < roomsList.Count; i++)
@@ -493,7 +442,7 @@ namespace Searching
         
         public IEnumerator MoveEnemy()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             
             List<OOPEnemy> list = new List<OOPEnemy>();
             foreach (var enemyList in enemies.Values)

@@ -68,6 +68,14 @@ namespace Searching
             positionY = toY;
             Vector3 targetPosition = new Vector3(positionX, positionY, 0);
             Vector3 currentPosition = new Vector3(fromX, fromY, 0);
+            if (IsPotion(targetPosition))
+            {
+                List<OOPItemPotion> potionAtTargetPosition = mapScript.potion[new Vector2(positionX, positionY)];
+                foreach (var potion in potionAtTargetPosition)
+                {
+                    potion.Hit();
+                }
+            }    
             if (HasPlacement(targetPosition))
             {
                 if (IsEnemy(targetPosition))
@@ -79,15 +87,6 @@ namespace Searching
                         positionX -= direction.x;
                         positionY -= direction.y;
                         return; 
-                    }
-                }
-                else if (IsPotion(targetPosition))
-                {
-                    List<OOPItemPotion> potionAtTargetPosition = mapScript.potion[new Vector2(positionX, positionY)];
-                    foreach (var potion in potionAtTargetPosition)
-                    {
-                        potion.Hit();
-                        StartCoroutine(MoveSmoothly(targetPosition)); 
                     }
                 }
                 else if (IsKey(targetPosition))
