@@ -14,9 +14,7 @@ namespace Searching
         public float damage;
         public float hitchance;
         public float evasion;
-
-        protected bool isAlive;
-        protected bool isFreeze;
+        
         private bool isMoving = false;
         
         public OOPMapGenerator mapScript;
@@ -32,13 +30,7 @@ namespace Searching
 
         public virtual void Move(Vector2 direction)
         {
-            if (isFreeze == true || isMoving)
-            {
-                GetComponent<SpriteRenderer>().color = Color.white;
-                isFreeze = false;
-                return;
-            }
-            
+
             float toX = positionX + direction.x;
             float toY = positionY + direction.y;
             Vector2 nextPosition = new Vector2(toX, toY);
@@ -268,7 +260,7 @@ namespace Searching
             Debug.Log(Name + " Current Energy : " + health);
             CheckDead();
         }
-        public virtual void TakeDamage(int Damage, bool freeze)
+        /*public virtual void TakeDamage(int Damage, bool freeze)
         {
             health -= Damage;
             isFreeze = freeze;
@@ -276,7 +268,7 @@ namespace Searching
             Debug.Log(Name + " Current Energy : " + health);
             Debug.Log("you is Freeze");
             CheckDead();
-        }
+        }*/
 
         public void SetNode(Vector3 position, string name)
         {

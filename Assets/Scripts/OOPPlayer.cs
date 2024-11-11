@@ -15,7 +15,6 @@ namespace Searching
         public float maxHealth;
         public void Start()
         {
-            PrintInfo();
             GetRemainEnergy();
             maxHealth = health;
             mapScript = FindObjectOfType<OOPMapGenerator>();

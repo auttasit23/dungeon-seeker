@@ -14,12 +14,7 @@ namespace Searching
         public float positionY;
 
         public OOPMapGenerator mapGenerator;
-        public OOPEnemy enemy;
-
-        public void PrintInfo()
-        {
-            Debug.Log("tell me your " + Name);
-        }
+        
 
         private void Start()
         {
