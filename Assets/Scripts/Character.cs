@@ -118,7 +118,7 @@ namespace Searching
             isMoving = true;
             Vector3 startPosition = transform.position;
             float elapsedTime = 0f;
-            float duration = 0.5f;
+            float duration = 0.2f;
 
             while (elapsedTime < duration)
             {

@@ -81,7 +81,7 @@ namespace Searching
                 case "hitchance":
                     hitchance += value;
                     break;
-                case "maxhealth":
+                case "maxhealth": 
                     maxHealth += value;
                     break;
                 case "evasion":
@@ -92,6 +92,7 @@ namespace Searching
                     break;
             }
         }
+        
         /*public void UseFireStorm()
         {
             if (inventory.numberOfItem("FireStorm") > 0)

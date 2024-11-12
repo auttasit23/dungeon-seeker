@@ -210,11 +210,11 @@ namespace Searching
             Vector2 oldPosition = new Vector2(transform.position.x, transform.position.y);
             Vector2 newPosition = new Vector2(x, y);
             
+            Debug.Log(mapScript.player.transform.position + "|" + newPosition);
             if (IsPlayer(newPosition))
             {
                 return;
             }
-            
             if (HasPlacement(oldPosition))
             {
                 if (IsEnemy(oldPosition))
@@ -224,10 +224,18 @@ namespace Searching
                         path.RemoveAt(0);
                     }
                 }
+                if (IsPlayer(oldPosition))
+                {
+                    return;
+                }
             }
             
             if (HasPlacement(newPosition))
             {
+                if (IsPlayer(newPosition))
+                {
+                    return;
+                }
                 if (IsPotion(newPosition))
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
@@ -274,6 +282,10 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
+            }
+            else if (IsPlayer(newPosition))
+            {
+                return;
             }
             else
             {
