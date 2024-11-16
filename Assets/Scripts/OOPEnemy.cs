@@ -138,7 +138,7 @@ namespace Searching
         public IEnumerator EnemyAttackAnimator()
         {
             currentState = EnemyState.Attack;
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.5f);
             currentState = EnemyState.Idle;
         }
         public void Hit(Vector3 targetPosition)
@@ -149,14 +149,14 @@ namespace Searching
                 int randomValue = Random.Range(0, 100);
                 if (randomValue < mapScript.player.hitchance)
                 {
-                    GameObject points = Instantiate(floatingPoints, targetPosition, Quaternion.identity);
+                    GameObject points = Instantiate(floatingPoints, new Vector3(targetPosition.x, targetPosition.y, -1), Quaternion.identity);
                     points.transform.GetChild(0).GetComponent<TextMesh>().text = mapScript.player.damage.ToString("F0");
                     health -= mapScript.player.damage;
                     Debug.Log("Enemy Health: " + health);
                 }
                 else
                 {
-                    GameObject points = Instantiate(floatingPoints, targetPosition, Quaternion.identity);
+                    GameObject points = Instantiate(floatingPoints, new Vector3(targetPosition.x, targetPosition.y, -1), Quaternion.identity);
                     TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
                     textMesh.text = "Miss";
                     textMesh.color = Color.green;
@@ -165,7 +165,7 @@ namespace Searching
 
                 if (mapScript.player.evasion > randomValue)
                 {
-                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity);
+                    GameObject points = Instantiate(floatingPoints, new Vector3(mapScript.player.transform.position.x, mapScript.player.transform.position.y, -1), Quaternion.identity);
                     TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
                     textMesh.text = "Miss";
                     textMesh.color = Color.green;
@@ -173,7 +173,7 @@ namespace Searching
                 }
                 else
                 {
-                    GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity);
+                    GameObject points = Instantiate(floatingPoints, new Vector3(mapScript.player.transform.position.x, mapScript.player.transform.position.y, -1), Quaternion.identity);
                     points.transform.GetChild(0).GetComponent<TextMesh>().text = damage.ToString("F0");
                     this.Attack(mapScript.player);
                 }
@@ -312,7 +312,6 @@ namespace Searching
         
                     path = AStarManager.instance.GeneratePath(startNode, endNode);
                     path.RemoveAt(0);
-                    StartCoroutine(EnemyMoveAnimator());
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }

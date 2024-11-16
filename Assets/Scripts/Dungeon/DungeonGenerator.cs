@@ -19,6 +19,7 @@ public class ItemData
     public int MaxQuantity;
     public TileBase Item;
     public PlacementType Placement;
+    public GameObject light;
 }
 
 
@@ -38,6 +39,7 @@ public class DungeonGenerator : MonoBehaviour
 
     [Header("Set Transform")]
     public Transform nodesParent;
+    public Transform LightParent;
 
     Dictionary<Vector2Int, Node> nodes = new Dictionary<Vector2Int, Node>();
     
@@ -177,7 +179,15 @@ public class DungeonGenerator : MonoBehaviour
                             (item.Placement == ItemData.PlacementType.NearWall && !isSurrounded))
                         {
                             tilemapVisualizer.PaintSingleTile(tilemapVisualizer.itemTileMap, item.Item, position);
-                        
+                            
+                            if (item.light != null)
+                            {
+                                Vector3 worldPosition = tilemapVisualizer.itemTileMap.CellToWorld(new Vector3Int(position.x, position.y, 0));
+                                worldPosition += tilemapVisualizer.itemTileMap.cellSize / 2;
+
+                                GameObject obj = Instantiate(item.light, worldPosition, Quaternion.identity);
+                                obj.transform.parent = LightParent;
+                            }
                             nodes[position].ItemPlaced = true;
                             itemPlaced = true;
                         }
@@ -186,6 +196,7 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
+
     
 
 
