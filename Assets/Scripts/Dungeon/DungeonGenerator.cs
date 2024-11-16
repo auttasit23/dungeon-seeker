@@ -52,7 +52,7 @@ public class DungeonGenerator : MonoBehaviour
     private List<ItemData> itemDataList = new List<ItemData>();
     
     //Room Data
-    public enum RoomType { PlayerRoom, EnemyRoom, TreasureRoom, ExitRoom, Other }
+    public enum RoomType { PlayerRoom, EnemyRoom, TreasureRoom, ExitRoom, KeyRoom, Other }
     
     [SerializeField] public int enemyRoomCount = 1;
     [SerializeField] public int treasureRoomCount = 1;
@@ -356,7 +356,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             assignedRoomTypes.Add(RoomType.PlayerRoom);
 
-            for (int i = 1; i < roomCount - 1; i++)
+            for (int i = 1; i < roomCount - 2; i++) // เว้นที่ไว้ให้ KeyRoom
             {
                 if (remainingEnemyRooms > 0)
                 {
@@ -373,12 +373,14 @@ public class DungeonGenerator : MonoBehaviour
                     assignedRoomTypes.Add(RoomType.Other);
                 }
             }
+            assignedRoomTypes.Add(RoomType.KeyRoom);
 
             assignedRoomTypes.Add(RoomType.ExitRoom);
         }
 
         return assignedRoomTypes;
     }
+
 
     private void OnDrawGizmos()
     {
@@ -413,7 +415,9 @@ public class DungeonGenerator : MonoBehaviour
             case RoomType.EnemyRoom: return Color.red;
             case RoomType.TreasureRoom: return Color.yellow;
             case RoomType.ExitRoom: return Color.cyan;
+            case RoomType.KeyRoom: return new Color(1.0f, 0.5f, 0.0f);
             default: return Color.white;
         }
     }
+
 }

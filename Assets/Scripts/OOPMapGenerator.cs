@@ -19,6 +19,7 @@ namespace Searching
         [Header("Set Prefab")]
         public GameObject[] itemsPrefab;
         public GameObject[] keysPrefab;
+        public GameObject[] treasurePrefab;
         public GameObject[] enemiesPrefab;
 
         [Header("Set Transform")]
@@ -26,7 +27,11 @@ namespace Searching
         public Transform enemyParent;
         public Transform potionParent;
         
+        public bool selectingTreasure = false;
+        public GameObject choose;
+        
         public OOPItemKey keys;
+        public Dictionary<Vector2, List<OOPTreasure>> treasure = new Dictionary<Vector2, List<OOPTreasure>>();
         public Dictionary<Vector2, List<OOPItemPotion>> potion = new Dictionary<Vector2, List<OOPItemPotion>>();
         public Dictionary<Vector2, List<OOPEnemy>> enemies = new Dictionary<Vector2, List<OOPEnemy>>();
         Dictionary<Vector2, Node> nodes = new Dictionary<Vector2, Node>();
@@ -41,6 +46,7 @@ namespace Searching
             PlaceExit();
             PlaceKey();
             PlacePotion();
+            PlaceTreasure();
         }
         
         private void Update()
@@ -95,7 +101,6 @@ namespace Searching
                         isOccupied = true;
                     }
                 }
-
                 if (!isOccupied)
                 {
                     nodeS.onMe = "empty";
@@ -124,6 +129,7 @@ namespace Searching
             PlaceExit();
             PlaceKey();
             PlacePotion();
+            PlaceTreasure();
         }
         
         public Vector3 FindClosestNodePosition(Vector3 targetPosition)
@@ -331,7 +337,7 @@ namespace Searching
         {
             for (int i = 0; i < roomsList.Count; i++)
             {
-                if (roomTypes[i] == RoomType.TreasureRoom)
+                if (roomTypes[i] == RoomType.KeyRoom)
                 {
                     Vector3 roomCenter = (Vector3)roomsList[i].center;
 
@@ -343,6 +349,38 @@ namespace Searching
                     if (spriteRenderer != null)
                     {
                         spriteRenderer.sortingOrder = 1;
+                    }
+                }
+            }
+        }
+        
+        public void PlaceTreasure()
+        {
+            for (int i = 0; i < roomsList.Count; i++)
+            {
+                if (roomTypes[i] == RoomType.TreasureRoom)
+                {
+                    Vector3 randomPo = (Vector3)roomsList[i].center;
+                    for (int j = 0; j < 1; j++)
+                    {
+                        Vector2 closestNodePosition = FindClosestNodePosition(randomPo);
+                        Vector3 position = new Vector3(closestNodePosition.x, closestNodePosition.y, 0);
+
+                        GameObject obj = Instantiate(treasurePrefab[0], position, Quaternion.identity);
+                        obj.transform.parent = itemParent;
+
+                        SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+                        if (spriteRenderer != null)
+                        {
+                            spriteRenderer.sortingOrder = 1;
+                        }
+                        OOPTreasure treasureObj = obj.GetComponent<OOPTreasure>();
+                        Vector2 key = new Vector2(closestNodePosition.x, closestNodePosition.y);
+                        if (!treasure.ContainsKey(key))
+                        {
+                            treasure[key] = new List<OOPTreasure>();
+                        }
+                        treasure[key].Add(treasureObj);
                     }
                 }
             }

@@ -68,7 +68,15 @@ namespace Searching
                 {
                     potion.Hit();
                 }
-            }    
+            }
+            if (IsTreasure(targetPosition))
+            {
+                List<OOPTreasure> potionAtTargetPosition = mapScript.treasure[new Vector2(positionX, positionY)];
+                foreach (var treasure in potionAtTargetPosition)
+                {
+                    treasure.Hit();
+                }
+            }   
             if (HasPlacement(targetPosition))
             {
                 if (IsEnemy(targetPosition))
@@ -216,6 +224,16 @@ namespace Searching
             }
         }
         
+        public bool IsTreasure(Vector3 position)
+        {
+            Vector2 targetKey = new Vector2(position.x, position.y);
+            if (mapScript.treasure.ContainsKey(targetKey) && mapScript.treasure[targetKey].Count > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+        
         public bool IsExit(Vector3 position)
         {
             if (mapScript.Exit != null)
@@ -300,7 +318,7 @@ namespace Searching
         public void Heal(float healPercentage)
         {
             int healAmount = Mathf.RoundToInt(mapScript.player.maxHealth * (healPercentage / 100f));
-            GameObject points = Instantiate(floatingPoints, mapScript.player.transform.position, Quaternion.identity);
+            GameObject points = Instantiate(floatingPoints, new Vector3(mapScript.player.transform.position.x, mapScript.player.transform.position.y, -1), Quaternion.identity);
             TextMesh textMesh = points.transform.GetChild(0).GetComponent<TextMesh>();
             health += healAmount;
             health = Mathf.Clamp(health, 0, mapScript.player.maxHealth);

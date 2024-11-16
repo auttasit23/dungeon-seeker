@@ -51,22 +51,22 @@ namespace Searching
 
             if (moveCooldownTimer <= 0)
             {
-                if (Input.GetKeyDown(KeyCode.W))
+                if (Input.GetKeyDown(KeyCode.W) && !mapScript.selectingTreasure)
                 {
                     Move(Vector2.up);
                     moveCooldownTimer = moveCooldown;
                 }
-                else if (Input.GetKeyDown(KeyCode.S))
+                else if (Input.GetKeyDown(KeyCode.S) && !mapScript.selectingTreasure)
                 {
                     Move(Vector2.down);
                     moveCooldownTimer = moveCooldown;
                 }
-                else if (Input.GetKeyDown(KeyCode.A))
+                else if (Input.GetKeyDown(KeyCode.A) && !mapScript.selectingTreasure)
                 {
                     Move(Vector2.left);
                     moveCooldownTimer = moveCooldown;
                 }
-                else if (Input.GetKeyDown(KeyCode.D))
+                else if (Input.GetKeyDown(KeyCode.D) && !mapScript.selectingTreasure)
                 {
                     Move(Vector2.right);
                     moveCooldownTimer = moveCooldown;

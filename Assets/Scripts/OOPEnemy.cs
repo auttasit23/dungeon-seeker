@@ -335,6 +335,16 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
+                if (IsTreasure(newPosition))
+                {
+                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
+        
+                    path = AStarManager.instance.GeneratePath(startNode, endNode);
+                    path.RemoveAt(0);
+                    StartCoroutine(MoveSmoothly(path[0].transform.position));
+                    return;
+                }
                 if (IsEnemy(newPosition) && newPosition != oldPosition)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
