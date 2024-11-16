@@ -20,6 +20,16 @@ namespace Searching
         
         public CameraFollow camera;
         private bool isPathGenerated = false;
+        private bool isFacingRight = true;
+        
+        public enum EnemyState
+        {
+            Idle,
+            Walk,
+            Attack,
+        }
+        private EnemyState currentState = EnemyState.Idle;
+
         
         IEnumerator StartAfterSceneLoad()
         {
@@ -36,6 +46,7 @@ namespace Searching
         {
             damage = damage * Mathf.Pow(1.5f, GameManager.level - 1);
             health = health * Mathf.Pow(1.5f, GameManager.level - 1);
+            animator = gameObject.GetComponent<Animator>();
             playerObject = GameObject.FindGameObjectWithTag("Player");
             if (playerObject != null)
             {
@@ -64,14 +75,72 @@ namespace Searching
         private void Update()
         {
             MoveAlongPath();
-
+            EnemyUpdateState();
+            if (player != null)
+            {
+                FlipTowardsPlayer();
+            }
             if (Input.GetKeyDown(KeyCode.R))
             {
                 path.Clear();
                 GeneratePathToPlayer();
             }
         }
+        private void FlipTowardsPlayer()
+        {
+            if (player.position.x > transform.position.x && !isFacingRight)
+            {
+                FlipCharacter();
+            }
+            else if (player.position.x < transform.position.x && isFacingRight)
+            {
+                FlipCharacter();
+            }
+        }
+
+        private void FlipCharacter()
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 scale = transform.localScale;
+            scale.x *= -1;
+            transform.localScale = scale;
+        }
         
+        public void EnemyUpdateState()
+        {
+            if (currentState == EnemyState.Idle)
+            {
+                animator.SetBool("idle", true);
+                animator.SetBool("walk", false);
+                animator.SetBool("attack", false);
+            }
+            if (currentState == EnemyState.Walk)
+            {
+                animator.SetBool("idle", false);
+                animator.SetBool("walk", true);
+                animator.SetBool("attack", false);
+            }
+            if (currentState == EnemyState.Attack)
+            {
+                animator.SetBool("idle", false);
+                animator.SetBool("walk", false);
+                animator.SetBool("attack", true);
+            }
+        }
+        
+        public IEnumerator EnemyMoveAnimator()
+        {
+            currentState = EnemyState.Walk;
+            yield return new WaitForSeconds(0.3f);
+            currentState = EnemyState.Idle;
+        }
+        
+        public IEnumerator EnemyAttackAnimator()
+        {
+            currentState = EnemyState.Attack;
+            yield return new WaitForSeconds(0.3f);
+            currentState = EnemyState.Idle;
+        }
         public void Hit(Vector3 targetPosition)
         {
             if (this != null && transform.position == targetPosition)
@@ -119,6 +188,7 @@ namespace Searching
 
         public void Attack(OOPPlayer _player)
         {
+            StartCoroutine(EnemyAttackAnimator());
             _player.TakeDamage(damage);
         }
 
@@ -242,6 +312,7 @@ namespace Searching
         
                     path = AStarManager.instance.GeneratePath(startNode, endNode);
                     path.RemoveAt(0);
+                    StartCoroutine(EnemyMoveAnimator());
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
