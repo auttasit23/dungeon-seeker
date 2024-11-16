@@ -1,3 +1,4 @@
+using Inventory.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,12 +50,11 @@ namespace Inventory.UI
                 uiItem.OnRightMouseBtnClick += HandleShowItemActions;
             }
         }
-        public void UpdateData(int itemIndex,
-                Sprite itemImage, int itemQuantity)
+        public void UpdateData(int itemIndex, ItemSO itemData, int itemQuantity)
         {
             if (listOfUIItems.Count > itemIndex)
             {
-                listOfUIItems[itemIndex].SetData(itemImage, itemQuantity);
+                listOfUIItems[itemIndex].SetData(itemData, itemQuantity);
             }
         }
 
