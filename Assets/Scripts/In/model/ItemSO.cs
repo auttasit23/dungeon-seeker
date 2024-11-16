@@ -24,8 +24,20 @@ namespace Inventory.Model
 
         [field: SerializeField]
         public Sprite ItemImage { get; set; }
+        
+        [field: SerializeField]
+        public Itemtype itemType { get; set; }
 
-
+        [field: SerializeField]
+        public int itemStat {get; set; }
     }
 
+   
 }
+ public enum Itemtype
+    {
+        Potion,
+        Weapon,
+        Armor,
+        Accessory
+    }

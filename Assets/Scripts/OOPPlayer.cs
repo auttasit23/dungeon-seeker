@@ -22,7 +22,7 @@ namespace Searching
         private float moveCooldownTimer = 0f;
         public float maxHealth;
         private bool isFacingRight = true;
-        
+        private int statPoint;
         public void Start()
         {
             GetRemainEnergy();
@@ -165,7 +165,17 @@ namespace Searching
                     break;
             }
         }
-        
+
+        internal void IncreaseStatPoints(int point)
+        {
+            statPoint += point;
+        }
+
+        internal void IncreaseHealth(int healVal)
+        {
+            health += healVal;
+        }
+
         /*public void UseFireStorm()
         {
             if (inventory.numberOfItem("FireStorm") > 0)
