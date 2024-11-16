@@ -19,10 +19,11 @@ namespace Searching
         
         public OOPMapGenerator mapScript;
         public GameObject floatingPoints;
-
+        
+        public Animator animator;
+        
 
         // Start is called before the first frame update
-
         protected void GetRemainEnergy()
         {
             Debug.Log(Name + " : " + health);
@@ -75,6 +76,7 @@ namespace Searching
                     List<OOPEnemy> enemiesAtTargetPosition = mapScript.enemies[new Vector2(positionX, positionY)];
                     foreach (var enemy in enemiesAtTargetPosition)
                     {
+                        StartCoroutine(mapScript.player.PlayerAttackAnimator());
                         enemy.Hit(targetPosition);
                         positionX -= direction.x;
                         positionY -= direction.y;
@@ -87,6 +89,7 @@ namespace Searching
                     {
                         mapScript.keys.Hit();
                         StartCoroutine(MoveSmoothly(targetPosition));
+                        StartCoroutine(mapScript.player.PlayerMoveAnimator());
                     }
                 }
                 else if (IsExit(targetPosition))
@@ -95,6 +98,7 @@ namespace Searching
                     {
                         mapScript.Exit.Hit();
                         StartCoroutine(MoveSmoothly(targetPosition));
+                        StartCoroutine(mapScript.player.PlayerMoveAnimator());
                     }
                 }
                 else
@@ -106,6 +110,7 @@ namespace Searching
             }
             else
             {
+                StartCoroutine(mapScript.player.PlayerMoveAnimator());
                 StartCoroutine(MoveSmoothly(targetPosition));
                 TakeDamage(1);
             }

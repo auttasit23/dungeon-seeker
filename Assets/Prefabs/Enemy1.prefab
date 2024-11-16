@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 21210520}
   - component: {fileID: 6133920}
   - component: {fileID: 464573930478378977}
+  - component: {fileID: -6199697177023925511}
   m_Layer: 8
   m_Name: Enemy1
   m_TagString: Enemy
@@ -152,9 +153,30 @@ MonoBehaviour:
   hitchance: 0
   evasion: 0
   mapScript: {fileID: 0}
+  floatingPoints: {fileID: 2768330661223070888, guid: def18ae4cd9d4574994398d2f0691777, type: 3}
   player: {fileID: 0}
   playerObject: {fileID: 0}
   currentNode: {fileID: 0}
   path: []
   camera: {fileID: 0}
-  floatingPoints: {fileID: 2768330661223070888, guid: def18ae4cd9d4574994398d2f0691777, type: 3}
+--- !u!95 &-6199697177023925511
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 110520}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 127a9acf1d9e3504d9734a2a82099bc1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

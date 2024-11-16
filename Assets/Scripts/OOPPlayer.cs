@@ -9,15 +9,26 @@ namespace Searching
 {
     public class OOPPlayer : Character
     {
+        public enum PlayerState
+        {
+            Idle,
+            Walk,
+            Attack,
+        }
+        private PlayerState currentState = PlayerState.Idle;
+        
         public Inventory inventory;
         public float moveCooldown = 0.5f;
         private float moveCooldownTimer = 0f;
         public float maxHealth;
+        private bool isFacingRight = true;
+        
         public void Start()
         {
             GetRemainEnergy();
             maxHealth = health;
             mapScript = FindObjectOfType<OOPMapGenerator>();
+            animator = gameObject.GetComponent<Animator>();
             if (mapScript == null)
             {
                 Debug.LogError("OOPMapGenerator not found in the scene!");
@@ -26,11 +37,18 @@ namespace Searching
 
         public void Update()
         {
+            PlayerUpdateState();
             if (moveCooldownTimer > 0)
             {
                 moveCooldownTimer -= Time.deltaTime;
             }
             
+            float horizontalInput = Input.GetAxis("Horizontal");
+            if (horizontalInput != 0)
+            {
+                Flip(horizontalInput);
+            }
+
             if (moveCooldownTimer <= 0)
             {
                 if (Input.GetKeyDown(KeyCode.W))
@@ -56,6 +74,61 @@ namespace Searching
             }
         }
         
+        public void Flip(float direction)
+        {
+            if (direction > 0 && !isFacingRight)
+            {
+                FlipCharacter();
+            }
+            else if (direction < 0 && isFacingRight)
+            {
+                FlipCharacter();
+            }
+        }
+
+        private void FlipCharacter()
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 scale = transform.localScale;
+            scale.x *= -1;
+            transform.localScale = scale;
+        }
+        
+        public void PlayerUpdateState()
+        {
+            if (currentState == PlayerState.Idle)
+            {
+                animator.SetBool("idle", true);
+                animator.SetBool("walk", false);
+                animator.SetBool("attack", false);
+            }
+            if (currentState == PlayerState.Walk)
+            {
+                animator.SetBool("idle", false);
+                animator.SetBool("walk", true);
+                animator.SetBool("attack", false);
+            }
+            if (currentState == PlayerState.Attack)
+            {
+                animator.SetBool("idle", false);
+                animator.SetBool("walk", false);
+                animator.SetBool("attack", true);
+            }
+        }
+
+        public IEnumerator PlayerMoveAnimator()
+        {
+            currentState = PlayerState.Walk;
+            yield return new WaitForSeconds(0.3f);
+            currentState = PlayerState.Idle;
+        }
+        
+        public IEnumerator PlayerAttackAnimator()
+        {
+            currentState = PlayerState.Attack;
+            yield return new WaitForSeconds(0.3f);
+            currentState = PlayerState.Idle;
+        }
 
         public void Attack(OOPEnemy _enemy)
         {

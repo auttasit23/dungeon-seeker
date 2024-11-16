@@ -210,7 +210,6 @@ namespace Searching
             Vector2 oldPosition = new Vector2(transform.position.x, transform.position.y);
             Vector2 newPosition = new Vector2(x, y);
             
-            Debug.Log(mapScript.player.transform.position + "|" + newPosition);
             if (IsPlayer(newPosition))
             {
                 return;
