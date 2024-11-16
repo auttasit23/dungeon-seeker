@@ -750,19 +750,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8782209738593883965, guid: fd93780f39aab3d40bfb50bfad2f4410, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8782209738593883965, guid: fd93780f39aab3d40bfb50bfad2f4410, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8782209738593883965, guid: fd93780f39aab3d40bfb50bfad2f4410, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 44.2221
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8782209738593883965, guid: fd93780f39aab3d40bfb50bfad2f4410, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -40.2483
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8855656742413977418, guid: fd93780f39aab3d40bfb50bfad2f4410, type: 3}
       propertyPath: m_Pivot.x
@@ -2284,13 +2284,25 @@ MonoBehaviour:
   inventoryData: {fileID: 11400000, guid: e1d535342fa0bde42a717e81559d12ce, type: 2}
   initialItems:
   - quantity: 1
-    item: {fileID: 11400000, guid: 3ac239e77e8dbe443b5e0d404489ab16, type: 2}
+    item: {fileID: 0}
   - quantity: 0
     item: {fileID: 0}
   - quantity: 1
-    item: {fileID: 11400000, guid: 4f562745bccfe7d4cb42ae84296f55f4, type: 2}
+    item: {fileID: 0}
   - quantity: 1
-    item: {fileID: 11400000, guid: 3ac239e77e8dbe443b5e0d404489ab16, type: 2}
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
+  - quantity: 0
+    item: {fileID: 0}
   - quantity: 0
     item: {fileID: 0}
 --- !u!95 &2142152735

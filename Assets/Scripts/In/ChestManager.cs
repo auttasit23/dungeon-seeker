@@ -11,7 +11,7 @@ public class ChestManager : MonoBehaviour
     public InventorySO inventoryController;
     public OOPPlayer player;
     // Start is called before the first frame update
-    private void Start()
+   /* private void Start()
     {
         player = GetComponent<OOPPlayer>();
     }
@@ -51,5 +51,5 @@ public class ChestManager : MonoBehaviour
     private void CloseChest()
     {
         FindObjectOfType<ChestInteraction>().CloseChestUI();
-    }
+    }*/
 }

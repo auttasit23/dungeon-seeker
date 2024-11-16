@@ -1,4 +1,4 @@
-using Inventory.Model;
+﻿using Inventory.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace Inventory.UI
         {
             if (listOfUIItems.Count > itemIndex)
             {
-                listOfUIItems[itemIndex].SetData(itemData, itemQuantity);
+                listOfUIItems[itemIndex].SetData(itemData, itemQuantity);  // อัปเดต UI
             }
         }
 

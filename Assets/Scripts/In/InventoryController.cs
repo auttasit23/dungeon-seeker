@@ -103,5 +103,12 @@ namespace Inventory
 
             }
         }
+
+        internal void AddItemToInventory(ItemSO randomItem, int v)
+        {
+            throw new NotImplementedException();
+        }
     }
+
+    
 }
