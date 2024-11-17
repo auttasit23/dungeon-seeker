@@ -22,6 +22,9 @@ namespace Inventory.UI
         [SerializeField]
         private MouseFollower mouseFollower;
 
+        [SerializeField]
+        private RectTransform equipmentPanel;
+
         List<UIInventoryItem> listOfUIItems = new List<UIInventoryItem>();
 
         public event Action<int> OnDescriptionRequested,

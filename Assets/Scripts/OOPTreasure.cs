@@ -16,6 +16,7 @@ public class OOPTreasure : Identity
     private ItemDatabaseSO itemDatabase;
     private void Start()
     {
+       
         mapGenerator = FindObjectOfType<OOPMapGenerator>();
         if (mapGenerator == null)
         {

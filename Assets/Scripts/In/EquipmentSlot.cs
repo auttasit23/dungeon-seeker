@@ -9,81 +9,98 @@ namespace Inventory.UI
     public class EquipmentSlotManager : MonoBehaviour
     {
         [SerializeField]
-        private Image slotImage; // Display the equipped item's sprite
+        private Image slotImage; 
         [SerializeField]
-        private Itemtype allowedType; // The type of item this slot accepts
-        [SerializeField] ItemSO item;
-        [SerializeField] OOPPlayer player;
-        private UIInventoryItem currentItem;
-        public Action<ItemSO> OnEquipItem; // Event triggered when an item is equipped
-        public Action<ItemSO> OnUnequipItem; // Event triggered when an item is unequipped
+        private Itemtype allowedType; 
 
-        public bool IsSlotEmpty => currentItem == null;
+        private UIInventoryItem currentItem;
+
+        [SerializeField]
+        private OOPPlayer player; 
+        private ItemSO equippedItem; 
+
+        public Action<ItemSO> OnEquipItem; 
+        public Action<ItemSO> OnUnequipItem; 
+
+        public bool IsSlotEmpty => equippedItem == null;
 
         private void Awake()
         {
             ResetSlot();
         }
+
         private void Start()
         {
-            item = GetComponent<ItemSO>();
-            player = GetComponent<OOPPlayer>();
+            if (player == null)
+            {
+                player = FindObjectOfType<OOPPlayer>();
+                if (player == null)
+                {
+                    Debug.LogError("OOPPlayer is not assigned or found in the scene!");
+                }
+            }
         }
+
         public void ResetSlot()
         {
             slotImage.sprite = null;
             slotImage.enabled = false;
-            currentItem = null;
+            equippedItem = null;
+            UpdatePlayerStats(null); 
         }
 
         public bool CanAcceptItem(ItemSO item)
         {
-            return item.itemType == allowedType;
+            return item != null && item.itemType == allowedType;
         }
 
-        public void EquipItem(UIInventoryItem inventoryItem, Sprite itemSprite)
+        public void EquipItem(ItemSO item)
         {
-            if (currentItem != null)
+            if (item == null || !CanAcceptItem(item))
             {
-                // Handle swapping or unequipping
+                Debug.LogWarning($"Cannot equip item of type {item?.itemType}. Allowed type: {allowedType}");
+                return;
+            }
+
+            if (equippedItem != null)
+            {
                 UnequipCurrentItem();
             }
 
-            currentItem = inventoryItem;
-            slotImage.sprite = itemSprite;
+            equippedItem = item;
+            slotImage.sprite = item.ItemImage;
             slotImage.enabled = true;
 
-            OnEquipItem?.Invoke(inventoryItem.ItemSO);
-            Debug.Log($"Equipped {inventoryItem.ItemSO.Name} in {allowedType} slot.");
+            UpdatePlayerStats(equippedItem);
+            OnEquipItem?.Invoke(equippedItem);
+
+            Debug.Log($"Equipped {equippedItem.Name} in {allowedType} slot.");
         }
 
         public void UnequipCurrentItem()
         {
-            if (currentItem != null)
+            if (equippedItem != null)
             {
-                OnUnequipItem?.Invoke(currentItem.ItemSO);
+                OnUnequipItem?.Invoke(equippedItem);
+                UpdatePlayerStats(null); 
                 ResetSlot();
-                Debug.Log($"Unequipped {currentItem.ItemSO.Name} from {allowedType} slot.");
+
+                Debug.Log($"Unequipped {equippedItem.Name} from {allowedType} slot.");
             }
         }
 
-        public void Update()
+        private void UpdatePlayerStats(ItemSO item)
         {
-            if(currentItem != null)
-            {
-               if(allowedType == Itemtype.Weapon)
-                {
-                    player.damage += item.itemStat;
-                }
-               if (allowedType == Itemtype.Armor)
-               {
-                    player.evasion += item.itemStat;
-               }
-               if (allowedType == Itemtype.Weapon)
-               {
-                    player.maxHealth += item.itemStat;
-               }
-            }
+            if (player == null)
+                return;
+
+            if (allowedType == Itemtype.Weapon)
+                player.damage = (equippedItem?.itemStat ?? 0) + (item?.itemStat ?? 0);
+            else if (allowedType == Itemtype.Armor)
+                player.evasion = (equippedItem?.itemStat ?? 0) + (item?.itemStat ?? 0);
+            else if (allowedType == Itemtype.Accessory)
+                player.maxHealth = (equippedItem?.itemStat ?? 0) + (item?.itemStat ?? 0);
         }
     }
-}
+    }
+

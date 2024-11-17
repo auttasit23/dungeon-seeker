@@ -455,8 +455,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3920154287405962559}
   m_HandleRect: {fileID: 9187012412155221736}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 1
+  m_Value: 1.0000004
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -581,10 +581,8 @@ MonoBehaviour:
   itemPrefab: {fileID: 315287092827656830, guid: fd93780f39aab3d40bfb50bfad2f4410, type: 3}
   contentPanel: {fileID: 658400851301588631}
   itemDescription: {fileID: 4569817611241653540}
-  image: {fileID: 21300000, guid: 1328fdac4f9659944ba1f9ef1a937afc, type: 3}
-  quantity: 1
-  title: Sword
-  description: Cuts thing
+  mouseFollower: {fileID: 0}
+  equipmentPanel: {fileID: 0}
 --- !u!1 &3367272315694704255
 GameObject:
   m_ObjectHideFlags: 0

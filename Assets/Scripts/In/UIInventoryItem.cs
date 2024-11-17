@@ -22,13 +22,36 @@ namespace Inventory.UI
 
         public event Action<UIInventoryItem> OnItemClicked, OnItemDroppedOn, OnItemBeginDrag, OnItemEndDrag, OnRightMouseBtnClick;
 
+
         private bool empty = true;
+        private Transform originalParent;
+
+        [SerializeField] private Canvas canvas;
 
         public ItemSO ItemSO { get; private set; }
+        public Action<ItemSO> OnItemDropped;
+        [SerializeField]
+        private UIInventoryItem inventoryItem; 
+        [SerializeField]
+        private EquipmentSlotManager equipmentSlot; 
+
+        private void Start()
+        {
+            if (inventoryItem != null && equipmentSlot != null)
+            {
+                inventoryItem.OnItemDropped += equipmentSlot.EquipItem;
+            }
+        }
+
         public void Awake()
         {
             ResetData();
             Deselect();
+        }
+
+        public void SetItem(ItemSO item)
+        {
+            ItemSO = item;
         }
         public void ResetData()
         {
@@ -74,22 +97,40 @@ namespace Inventory.UI
         {
             if (empty)
                 return;
+            originalParent = transform.parent;
+            transform.SetParent(canvas.transform);
+            GetComponent<CanvasGroup>().blocksRaycasts = false;
             OnItemBeginDrag?.Invoke(this);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            if (eventData.pointerEnter != null && eventData.pointerEnter.TryGetComponent(out EquipmentSlotManager equipmentSlot))
+            {
+                if (equipmentSlot.CanAcceptItem(ItemSO))
+                {
+                    equipmentSlot.EquipItem(this); 
+                }
+                else
+                {
+                    Debug.Log("Cannot equip item here.");
+                }
+            }
+
             OnItemEndDrag?.Invoke(this);
         }
 
         public void OnDrop(PointerEventData eventData)
         {
-            OnItemDroppedOn?.Invoke(this);
+            if (ItemSO != null)
+            {
+                OnItemDropped?.Invoke(ItemSO); 
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-
+            transform.position = eventData.position; 
         }
     }
 }
