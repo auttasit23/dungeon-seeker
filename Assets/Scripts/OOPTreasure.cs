@@ -12,7 +12,8 @@ public class OOPTreasure : Identity
     private OOPMapGenerator mapGenerator;
 
     [SerializeField] private InventorySO inventoryData; // เพิ่มการอ้างอิงถึง InventorySO
-
+    [SerializeField]
+    private ItemDatabaseSO itemDatabase;
     private void Start()
     {
         mapGenerator = FindObjectOfType<OOPMapGenerator>();
@@ -66,25 +67,25 @@ public class OOPTreasure : Identity
     private void Option1Action()
     {
         Debug.Log("Executed action for option 1");
-        ChooseRandomEquipment();
+       ChooseRandomEquipment();
         Destroy(gameObject);
+        
+
     }
 
     private void Option2Action()
     {
         Debug.Log("Executed action for option 2");
-        ChooseRandomEquipment();
+       // ChooseRandomEquipment();
         Destroy(gameObject);
     }
 
     private void Option3Action()
     {
         Debug.Log("Executed action for option 3");
-        ChooseRandomEquipment();
+       // ChooseRandomEquipment();
         Destroy(gameObject);
     }
-
-
     public void ChooseRandomEquipment()
     {
         Itemtype[] equipmentTypes = { Itemtype.Weapon, Itemtype.Armor, Itemtype.Accessory };
@@ -103,26 +104,25 @@ public class OOPTreasure : Identity
         {
             Debug.LogError("Random item is null!");
         }
+
     }
 
-    private ItemSO GetRandomItemByType(Itemtype itemType)
+    public ItemSO GetRandomItemByType(Itemtype type)
+{
+    if (itemDatabase == null)
     {
-        // สร้างรายการไอเทมที่มีประเภทตรงกับที่เลือก
-        List<ItemSO> availableItems = new List<ItemSO>();
-        foreach (ItemSO item in Resources.LoadAll<ItemSO>("Data"))
-        {
-            if (item.itemType == itemType)
-            {
-                availableItems.Add(item);
-            }
-        }
-
-        // เลือกไอเทมสุ่มจากรายการที่ได้
-        if (availableItems.Count > 0)
-        {
-            return availableItems[UnityEngine.Random.Range(0, availableItems.Count)];
-        }
-
+        Debug.LogError("ItemDatabaseSO is not assigned to OOPTreasure!");
         return null;
     }
+
+    List<ItemSO> itemsOfType = itemDatabase.GetItemsByType(type);
+
+    if (itemsOfType == null || itemsOfType.Count == 0)
+    {
+        Debug.LogError($"No items found for type {type}");
+        return null;
+    }
+
+    return itemsOfType[UnityEngine.Random.Range(0, itemsOfType.Count)];
+}
 }

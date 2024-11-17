@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 21210520}
   - component: {fileID: 6133920}
   - component: {fileID: 6089303269621039736}
+  - component: {fileID: 7260230734882629550}
   m_Layer: 0
   m_Name: Treasure
   m_TagString: Exit
@@ -147,3 +148,21 @@ MonoBehaviour:
   positionX: 0
   positionY: 0
   mapGenerator: {fileID: 0}
+  inventoryData: {fileID: 0}
+  itemDatabase: {fileID: 0}
+--- !u!114 &7260230734882629550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 110520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2360f046cbbf87409e4243b9f699af0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items:
+  - {fileID: 11400000, guid: 4f562745bccfe7d4cb42ae84296f55f4, type: 2}
+  - {fileID: 11400000, guid: 3ac239e77e8dbe443b5e0d404489ab16, type: 2}
+  - {fileID: 11400000, guid: 45057d30feb89e041aa011351a2580e1, type: 2}
