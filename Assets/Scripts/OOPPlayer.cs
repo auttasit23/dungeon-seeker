@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
@@ -22,7 +23,12 @@ namespace Searching
         private float moveCooldownTimer = 0f;
         public float maxHealth;
         private bool isFacingRight = true;
-        
+        public int statPoint;
+        [SerializeField] private TextMeshProUGUI statText;
+        [SerializeField] private TextMeshProUGUI hpText;
+        [SerializeField] private TextMeshProUGUI atkText;
+        [SerializeField] private TextMeshProUGUI hitText;
+        [SerializeField] private TextMeshProUGUI evaText;
         public void Start()
         {
             GetRemainEnergy();
@@ -33,10 +39,16 @@ namespace Searching
             {
                 Debug.LogError("OOPMapGenerator not found in the scene!");
             }
+            
+            if (statText == null)
+            {
+                Debug.LogError("StatText is not assigned in UIManager!");
+            }
         }
 
         public void Update()
         {
+            UpdateStatText();
             PlayerUpdateState();
             if (moveCooldownTimer > 0)
             {
@@ -165,7 +177,118 @@ namespace Searching
                     break;
             }
         }
-        
+
+        public void IncreaseStatPoints(int point)
+        {
+            statPoint += point;
+            Debug.Log("increase status "+statPoint);
+        }
+
+        public void IncreaseHealth(int healVal)
+        {
+            health += healVal;
+        }
+
+        private void UpdateStatText()
+        {
+            if (statText != null)
+            {
+                statText.text = $"Status point: " + statPoint;
+            }
+            else
+            {
+                Debug.LogError("Stat Text is not assigned in the inspector!");
+            }
+            if(atkText != null)
+            {
+                atkText.text = "ATK " + damage;
+            }
+            else
+            {
+                Debug.LogError("Stat Text is not assigned in the inspector!");
+            }
+            if(hpText != null)
+            {
+                hpText.text = "MAXHP " + maxHealth;
+            }
+            else
+            {
+                Debug.LogError("Stat Text is not assigned in the inspector!");
+            }
+            if(hitText != null)
+            {
+                hitText.text = "HIT" + hitchance;
+            }
+            else
+            {
+                Debug.LogError("Stat Text is not assigned in the inspector!");
+            }
+            if(evaText != null)
+            {
+                evaText.text = "EVA " + evasion;
+            }
+            else
+            {
+                Debug.LogError("Stat Text is not assigned in the inspector!");
+            }
+        }
+
+        public void MaxHpUpgrade()
+        {
+            if (statPoint > 0 && maxHealth <= 75)
+            {
+                AddStat("maxhealth", 1);
+                statPoint -= 1;
+                Debug.Log("Current Max HP: " + maxHealth);
+            }
+            else
+            {
+                Debug.Log("Not enough stat");
+            }
+        }
+        public void AttackUpgrade()
+        {
+            if (statPoint > 0)
+            {
+                AddStat("damage", 1);
+                statPoint -= 1;
+                Debug.Log("Current damage: " + damage);
+            }
+            else
+            {
+                Debug.Log("Not enough stat");
+            }
+        }
+
+        public void HitChanceUpgrade()
+        {
+            if (statPoint > 0)
+            {
+                AddStat("hitchance", 1);
+                statPoint -= 1;
+                Debug.Log("Current hit chance: " + hitchance);
+            }
+            else
+            {
+                Debug.Log("Not enough stat");
+            }
+        }
+
+        public void EvasionUpgrade()
+        {
+            if (statPoint > 0)
+            {
+                AddStat("evasion", 1);
+                statPoint -= 1;
+                Debug.Log("Current hit chance: " + evasion);
+            }
+            else
+            {
+                Debug.Log("Not enough stat");
+            }
+        }
+
+
         /*public void UseFireStorm()
         {
             if (inventory.numberOfItem("FireStorm") > 0)

@@ -38,6 +38,7 @@ namespace Inventory.Model
                         item = item,
                         quantity = quantity
                     };
+                    InformAboutChange();
                     return;
                 }
                 
@@ -105,4 +106,5 @@ namespace Inventory.Model
                 quantity = 0,
             };
     }
+
 }

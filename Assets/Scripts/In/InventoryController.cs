@@ -3,6 +3,7 @@ using Inventory.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace Inventory
@@ -16,10 +17,13 @@ namespace Inventory
         private InventorySO inventoryData;
         
         public List<InventoryItem> initialItems = new List<InventoryItem>();
+        
+
         private void Start()
         {
             PrepareUI();
             PrepareInventoryData();
+            
         }
 
         private void PrepareInventoryData()
@@ -39,8 +43,7 @@ namespace Inventory
             inventoryUI.ResetAllItem();
             foreach (var item in inventoryState)
             {
-                inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage,
-                    item.Value.quantity);
+                inventoryUI.UpdateData(item.Key, item.Value.item, item.Value.quantity);
             }
         }
 
@@ -93,8 +96,7 @@ namespace Inventory
                     inventoryUI.Show();
                     foreach (var item in inventoryData.GetCurrentInventoryState())
                     {
-                        inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage,
-                        item.Value.quantity);
+                        inventoryUI.UpdateData(item.Key, item.Value.item, item.Value.quantity);
                     }
                 }
 
@@ -105,5 +107,13 @@ namespace Inventory
 
             }
         }
+
+        internal void AddItemToInventory(ItemSO randomItem, int v)
+        {
+            throw new NotImplementedException();
+        }
     }
+
+
+    
 }

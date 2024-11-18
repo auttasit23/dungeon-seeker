@@ -1,7 +1,9 @@
+﻿using Inventory.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +23,7 @@ namespace Inventory.UI
         [SerializeField]
         private MouseFollower mouseFollower;
 
+        
         List<UIInventoryItem> listOfUIItems = new List<UIInventoryItem>();
 
         public event Action<int> OnDescriptionRequested,
@@ -49,12 +52,11 @@ namespace Inventory.UI
                 uiItem.OnRightMouseBtnClick += HandleShowItemActions;
             }
         }
-        public void UpdateData(int itemIndex,
-                Sprite itemImage, int itemQuantity)
+        public void UpdateData(int itemIndex, ItemSO itemData, int itemQuantity)
         {
             if (listOfUIItems.Count > itemIndex)
             {
-                listOfUIItems[itemIndex].SetData(itemImage, itemQuantity);
+                listOfUIItems[itemIndex].SetData(itemData, itemQuantity);  // อัปเดต UI
             }
         }
 

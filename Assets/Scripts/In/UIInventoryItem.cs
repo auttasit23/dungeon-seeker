@@ -1,3 +1,4 @@
+using Inventory.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 namespace Inventory.UI
 {
@@ -22,6 +24,7 @@ namespace Inventory.UI
 
         private bool empty = true;
 
+        public ItemSO ItemSO { get; private set; }
         public void Awake()
         {
             ResetData();
@@ -36,11 +39,18 @@ namespace Inventory.UI
         {
             borderImage.enabled = false;
         }
-        public void SetData(Sprite sprite, int quantity)
+        public void SetData(ItemSO item, int quantity)
         {
+            if (item == null)
+            {
+                ResetData();
+                return;
+            }
+
+            ItemSO = item; // Assign the item
             itemImage.gameObject.SetActive(true);
-            itemImage.sprite = sprite;
-            quantityTxt.text = quantity + "";
+            itemImage.sprite = item.ItemImage; // Use the item's sprite
+            quantityTxt.text = quantity.ToString();
             empty = false;
         }
         public void Select()
