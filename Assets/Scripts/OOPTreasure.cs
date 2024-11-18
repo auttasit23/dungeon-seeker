@@ -11,27 +11,19 @@ using UnityEngine.UI;
 public class OOPTreasure : Identity
 {
     private OOPMapGenerator mapGenerator;
-
+    private OOPPlayer player;
     [SerializeField] private InventorySO inventoryData; 
     [SerializeField] private ItemDatabaseSO itemDatabase;
-    [SerializeField] private TextMeshProUGUI statText;
 
-    private int statTotal = 0;
 
     private void Start()
     {
+        player = FindObjectOfType<OOPPlayer>();
         mapGenerator = FindObjectOfType<OOPMapGenerator>();
         if (mapGenerator == null)
         {
             Debug.LogError("OOPMapGenerator not found in the scene!");
         }
-        statText = UIManager.Instance.statText;
-
-        if (statText == null)
-        {
-            Debug.LogError("StatText is not assigned in UIManager!");
-        }
-        UpdateStatText();
     }
 
     public override void Hit()
@@ -87,14 +79,14 @@ public class OOPTreasure : Identity
     private void Option2Action()
     {
         Debug.Log("Executed action for option 2");
-        statTotal++; 
-        UpdateStatText(); 
+        player.IncreaseStatPoints(5);
         Destroy(gameObject);
     }
 
     private void Option3Action()
     {
         Debug.Log("Executed action for option 3");
+        
         Destroy(gameObject);
     }
     public void ChooseRandomEquipment()
@@ -117,33 +109,23 @@ public class OOPTreasure : Identity
     }
 
     public ItemSO GetRandomItemByType(Itemtype type)
-{
-    if (itemDatabase == null)
     {
-        Debug.LogError("ItemDatabaseSO is not assigned to OOPTreasure!");
-        return null;
-    }
-
-    List<ItemSO> itemsOfType = itemDatabase.GetItemsByType(type);
-
-    if (itemsOfType == null || itemsOfType.Count == 0)
-    {
-        Debug.LogError($"No items found for type {type}");
-        return null;
-    }
-
-    return itemsOfType[UnityEngine.Random.Range(0, itemsOfType.Count)];
-}
-
-    private void UpdateStatText()
-    {
-        if (statText != null)
+        if (itemDatabase == null)
         {
-            statText.text = $"Stat Total: {statTotal}";
+            Debug.LogError("ItemDatabaseSO is not assigned to OOPTreasure!");
+            return null;
         }
-        else
+
+        List<ItemSO> itemsOfType = itemDatabase.GetItemsByType(type);
+
+        if (itemsOfType == null || itemsOfType.Count == 0)
         {
-            Debug.LogError("Stat Text is not assigned in the inspector!");
+            Debug.LogError($"No items found for type {type}");
+            return null;
         }
+
+        return itemsOfType[UnityEngine.Random.Range(0, itemsOfType.Count)];
     }
+
+    
 }
