@@ -671,7 +671,20 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1.Auttasit Umpornpanyarak
+  m_text: '1.Auttasit Umpornpanyarak 1650700824 PROJECT MANAGER
+
+    2.Thanasit Robsuntisuk
+    1650708660 PROGRAMMER
+
+    3.Kanin Pungeen 1650704982 ART / SOUND
+
+    4.Minyada
+    Jaroenmit 1650705187 UX/UI
+
+    5.Tachaput Nadee 1650708603 PROGRAMMER
+
+    6.Chatchapat
+    Wachiranawin 1650703125 LEVEL DESIGN'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3b7f71e5a4632294ca2fca82ee844aa6, type: 2}
   m_sharedMaterial: {fileID: -4325741382868965037, guid: 3b7f71e5a4632294ca2fca82ee844aa6, type: 2}
@@ -698,8 +711,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -734,7 +747,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -249.20068, w: 0}
+  m_margin: {x: 0, y: 0, z: -556.85596, w: -150.75098}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
