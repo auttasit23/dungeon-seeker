@@ -6,14 +6,18 @@ using System.Linq;
 using Searching;
 using UnityEngine;
 using Inventory;
-
+using TMPro;
+using UnityEngine.UI;
 public class OOPTreasure : Identity
 {
     private OOPMapGenerator mapGenerator;
 
-    [SerializeField] private InventorySO inventoryData; // เพิ่มการอ้างอิงถึง InventorySO
-    [SerializeField]
-    private ItemDatabaseSO itemDatabase;
+    [SerializeField] private InventorySO inventoryData; 
+    [SerializeField] private ItemDatabaseSO itemDatabase;
+    [SerializeField] private TextMeshProUGUI statText;
+
+    private int statTotal = 0;
+
     private void Start()
     {
         mapGenerator = FindObjectOfType<OOPMapGenerator>();
@@ -21,6 +25,13 @@ public class OOPTreasure : Identity
         {
             Debug.LogError("OOPMapGenerator not found in the scene!");
         }
+        statText = UIManager.Instance.statText;
+
+        if (statText == null)
+        {
+            Debug.LogError("StatText is not assigned in UIManager!");
+        }
+        UpdateStatText();
     }
 
     public override void Hit()
@@ -76,14 +87,14 @@ public class OOPTreasure : Identity
     private void Option2Action()
     {
         Debug.Log("Executed action for option 2");
-       // ChooseRandomEquipment();
+        statTotal++; 
+        UpdateStatText(); 
         Destroy(gameObject);
     }
 
     private void Option3Action()
     {
         Debug.Log("Executed action for option 3");
-       // ChooseRandomEquipment();
         Destroy(gameObject);
     }
     public void ChooseRandomEquipment()
@@ -91,13 +102,11 @@ public class OOPTreasure : Identity
         Itemtype[] equipmentTypes = { Itemtype.Weapon, Itemtype.Armor, Itemtype.Accessory };
         Itemtype randomType = equipmentTypes[UnityEngine.Random.Range(0, equipmentTypes.Length)];
 
-        // สุ่มไอเทมตามประเภทที่เลือก
         ItemSO randomItem = GetRandomItemByType(randomType);
 
-        // เพิ่มไอเทมลงใน Inventory
         if (randomItem != null)
         {
-            inventoryData.AddItem(randomItem, 1);  // เพิ่มไอเทมที่สุ่มได้ลงใน inventory
+            inventoryData.AddItem(randomItem, 1);
             Debug.Log($"Random Item {randomItem.Name} of type {randomItem.itemType} added to inventory.");
         }
         else
@@ -125,4 +134,16 @@ public class OOPTreasure : Identity
 
     return itemsOfType[UnityEngine.Random.Range(0, itemsOfType.Count)];
 }
+
+    private void UpdateStatText()
+    {
+        if (statText != null)
+        {
+            statText.text = $"Stat Total: {statTotal}";
+        }
+        else
+        {
+            Debug.LogError("Stat Text is not assigned in the inspector!");
+        }
+    }
 }

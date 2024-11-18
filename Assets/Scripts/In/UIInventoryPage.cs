@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +23,7 @@ namespace Inventory.UI
         [SerializeField]
         private MouseFollower mouseFollower;
 
+        
         List<UIInventoryItem> listOfUIItems = new List<UIInventoryItem>();
 
         public event Action<int> OnDescriptionRequested,

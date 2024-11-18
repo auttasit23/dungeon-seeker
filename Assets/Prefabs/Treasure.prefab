@@ -148,8 +148,9 @@ MonoBehaviour:
   positionX: 0
   positionY: 0
   mapGenerator: {fileID: 0}
-  inventoryData: {fileID: 0}
-  itemDatabase: {fileID: 0}
+  inventoryData: {fileID: 11400000, guid: e1d535342fa0bde42a717e81559d12ce, type: 2}
+  itemDatabase: {fileID: 7260230734882629550}
+  statText: {fileID: 0}
 --- !u!114 &7260230734882629550
 MonoBehaviour:
   m_ObjectHideFlags: 0
