@@ -305,7 +305,7 @@ namespace Searching
                 {
                     return;
                 }
-                if (IsPotion(newPosition))
+                if (IsPotion(newPosition) && path[0] != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -315,7 +315,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsExit(newPosition))
+                if (IsExit(newPosition) && path[0] != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -325,7 +325,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsKey(newPosition))
+                if (IsKey(newPosition) && path[0] != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -335,7 +335,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsTreasure(newPosition))
+                if (IsTreasure(newPosition) && path[0] != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -345,7 +345,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsEnemy(newPosition) && newPosition != oldPosition)
+                if (IsEnemy(newPosition) && newPosition != oldPosition && path[0] != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -355,7 +355,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (!IsEnemy(newPosition))
+                if (!IsEnemy(newPosition) && path[0] != null)
                 {
                     path.RemoveAt(0);
                     StartCoroutine(MoveSmoothly(path[0].transform.position));

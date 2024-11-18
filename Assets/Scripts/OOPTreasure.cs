@@ -10,7 +10,6 @@ using TMPro;
 using UnityEngine.UI;
 public class OOPTreasure : Identity
 {
-    private OOPMapGenerator mapGenerator;
     private OOPPlayer player;
     [SerializeField] private InventorySO inventoryData; 
     [SerializeField] private ItemDatabaseSO itemDatabase;
