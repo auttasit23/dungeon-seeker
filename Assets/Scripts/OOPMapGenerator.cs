@@ -503,7 +503,7 @@ namespace Searching
         
         public IEnumerator MoveEnemy()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             
             List<OOPEnemy> list = new List<OOPEnemy>();
             foreach (var enemyList in enemies.Values)
