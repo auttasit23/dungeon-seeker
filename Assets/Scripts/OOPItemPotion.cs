@@ -30,6 +30,7 @@ namespace Searching
         {
             if (this != null)
             {
+                audioManager.PlaySFX(audioManager.equip);
                 mapGenerator.player.Heal(25);
                 Destroy(gameObject);
             }

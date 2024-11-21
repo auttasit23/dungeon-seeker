@@ -156,6 +156,7 @@ namespace Searching
             {
                 Debug.Log("Player is Dead");
                 DeadMenu.SetActive(true);
+                audioManager.PlaySFX(audioManager.death);
             }
         }
 

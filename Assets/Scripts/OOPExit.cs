@@ -12,10 +12,12 @@ namespace Searching
         public string unlockKey;
         public GameObject YouWin;
 
+
         public override void Hit()
         {
             if (mapGenerator.player.inventory.numberOfItem(unlockKey) > 0)
             {
+                audioManager.PlaySFX(audioManager.victory);
                 mapGenerator.player.FullHeal();
                 if (GameManager.level >= 3)
                 {

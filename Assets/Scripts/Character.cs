@@ -21,7 +21,15 @@ namespace Searching
         public GameObject floatingPoints;
         
         public Animator animator;
-        
+
+        [NonSerialized]
+        private AudioManager audioManager;
+
+        private void Awake()
+        {
+            audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+        }
+
 
         // Start is called before the first frame update
         protected void GetRemainEnergy()
@@ -36,7 +44,6 @@ namespace Searching
             float toY = positionY + direction.y;
             Vector2 nextPosition = new Vector2(toX, toY);
             
-           
             Node[] nodes = FindObjectsOfType<Node>();
             bool hasNodeAtNextPosition = false;
     
@@ -85,6 +92,7 @@ namespace Searching
                     foreach (var enemy in enemiesAtTargetPosition)
                     {
                         StartCoroutine(mapScript.player.PlayerAttackAnimator());
+                        audioManager.PlaySFX(audioManager.attack);
                         enemy.Hit(targetPosition);
                         positionX -= direction.x;
                         positionY -= direction.y;
@@ -120,6 +128,7 @@ namespace Searching
             {
                 StartCoroutine(mapScript.player.PlayerMoveAnimator());
                 StartCoroutine(MoveSmoothly(targetPosition));
+                audioManager.PlaySFX(audioManager.walk);
                 TakeDamage(1);
             }
             mapScript.MoveEnemies();

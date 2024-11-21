@@ -19,7 +19,7 @@ public class OOPItemKey : Identity
 
     public override void Hit()
     {
-        Debug.Log("yes");
+        audioManager.PlaySFX(audioManager.equip);
         mapGenerator.player.inventory.AddItem(key);
         Destroy(gameObject);
     }

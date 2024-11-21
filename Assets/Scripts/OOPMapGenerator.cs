@@ -112,7 +112,6 @@ namespace Searching
         {
             tilemapVisualizer.Clear();
             ClearNodes();
-            CreateRooms();
             RemoveAllEnemies();
             GameObject enemy = GameObject.Find("Enemy");
 
@@ -123,6 +122,30 @@ namespace Searching
                     Destroy(child.gameObject);
                 }
             }
+            GameObject potion = GameObject.Find("Potion");
+            if (potion != null)
+            {
+                foreach (Transform child in potion.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            if (LightParent != null)
+            {
+                foreach (Transform child in LightParent.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            GameObject item = GameObject.Find("Item");
+            if (item != null)
+            {
+                foreach (Transform child in item.transform)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
+            CreateRooms();
             yield return new WaitForSeconds(0.5f);
             PlaceEnemy();
             PlacePlayer();

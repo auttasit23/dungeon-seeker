@@ -28,6 +28,7 @@ public class OOPTreasure : Identity
     public override void Hit()
     {
         StartCoroutine(WaitForInput());
+        audioManager.PlaySFX(audioManager.chest);
     }
 
     private IEnumerator WaitForInput()
@@ -41,6 +42,7 @@ public class OOPTreasure : Identity
             {
                 Debug.Log("Option 1 selected");
                 Option1Action();
+                audioManager.PlaySFX(audioManager.complete);
                 mapGenerator.choose.SetActive(false);
                 optionSelected = true;
                 mapGenerator.selectingTreasure = false;
@@ -49,6 +51,7 @@ public class OOPTreasure : Identity
             {
                 Debug.Log("Option 2 selected");
                 Option2Action();
+                audioManager.PlaySFX(audioManager.complete);
                 mapGenerator.choose.SetActive(false);
                 optionSelected = true;
                 mapGenerator.selectingTreasure = false;
@@ -57,6 +60,7 @@ public class OOPTreasure : Identity
             {
                 Debug.Log("Option 3 selected");
                 Option3Action();
+                audioManager.PlaySFX(audioManager.complete);
                 mapGenerator.choose.SetActive(false);
                 optionSelected = true;
                 mapGenerator.selectingTreasure = false;
@@ -85,7 +89,7 @@ public class OOPTreasure : Identity
     private void Option3Action()
     {
         Debug.Log("Executed action for option 3");
-        
+        mapGenerator.player.Heal(25f);
         Destroy(gameObject);
     }
     public void ChooseRandomEquipment()

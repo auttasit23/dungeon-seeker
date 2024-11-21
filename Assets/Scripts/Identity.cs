@@ -15,6 +15,13 @@ namespace Searching
 
         public OOPMapGenerator mapGenerator;
         
+        [NonSerialized]
+        public AudioManager audioManager;
+
+        private void Awake()
+        {
+            audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+        }
 
         private void Start()
         {
