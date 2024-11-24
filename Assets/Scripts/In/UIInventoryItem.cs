@@ -32,15 +32,18 @@ namespace Inventory.UI
         private bool isEquipped = false;
         public ItemSO ItemSO { get; private set; }
         public ItemSO[] equipmentSlots = new ItemSO[3];
+
         public void Awake()
         {
             ResetData();
             Deselect();
         }
+
         private void Start()
         {
             player = FindObjectOfType<OOPPlayer>();
         }
+
         public void ResetData()
         {
             itemImage.gameObject.SetActive(false);
@@ -49,10 +52,12 @@ namespace Inventory.UI
             isEquipped = false;
             equipUI.gameObject.SetActive(false);
         }
+
         public void Deselect()
         {
             borderImage.enabled = false;
         }
+
         public void SetData(ItemSO item, int quantity)
         {
             if (item == null)
@@ -67,6 +72,7 @@ namespace Inventory.UI
             quantityTxt.text = quantity.ToString();
             empty = false;
         }
+
         public void Select()
         {
             borderImage.enabled = true;
@@ -76,7 +82,7 @@ namespace Inventory.UI
         {
             if (pointerData.button == PointerEventData.InputButton.Right)
             {
-                ShowContextMenu(pointerData);
+                /*ShowContextMenu(pointerData);*/
                 OnRightMouseBtnClick?.Invoke(this);
             }
             else
@@ -85,7 +91,7 @@ namespace Inventory.UI
             }
         }
 
-        public void ShowContextMenu(PointerEventData pointerData)
+        /*public void ShowContextMenu(PointerEventData pointerData)
         {
             if (contextMenuInstance != null)
                 Destroy(contextMenuInstance);
@@ -101,10 +107,16 @@ namespace Inventory.UI
             var buttons = contextMenuInstance.GetComponentsInChildren<Button>();
             buttons[0].onClick.AddListener(() => ToggleEquip());
             buttons[1].onClick.AddListener(() => DestroyItem());
-        }
+        }*/
 
         public void ToggleEquip()
         {
+            if (ItemSO == null)
+            {
+                Debug.LogWarning("Cannot equip item: ItemSO is null.");
+                return;
+            }
+
             int slotIndex = GetSlotIndex(ItemSO);
 
             // Ensure the slot index is valid and within the 3-slot limit
@@ -147,6 +159,7 @@ namespace Inventory.UI
                 equipUI.text = "E";
             }
         }
+
         private void UnequipItemFromSlot(int slotIndex)
         {
             if (slotIndex < 0 || slotIndex >= equipmentSlots.Length)
@@ -190,8 +203,15 @@ namespace Inventory.UI
                     break;
             }
         }
+
         private int GetSlotIndex(ItemSO item)
         {
+            if (item == null)
+            {
+                Debug.LogWarning("Cannot get slot index: ItemSO is null.");
+                return -1;
+            }
+
             switch (item.itemType)
             {
                 case Itemtype.Weapon:
@@ -208,7 +228,7 @@ namespace Inventory.UI
 
         public void DestroyItem()
         {
-            Debug.Log($"{ItemSO.itemName} destroyed");
+            Debug.Log($"{ItemSO?.itemName ?? "Unknown item"} destroyed");
             ResetData();
             CloseContextMenu();
         }
@@ -218,6 +238,7 @@ namespace Inventory.UI
             if (contextMenuInstance != null)
                 Destroy(contextMenuInstance);
         }
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (empty)

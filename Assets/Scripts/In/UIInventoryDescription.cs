@@ -14,6 +14,10 @@ namespace Inventory.UI
         private TMP_Text title;
         [SerializeField]
         private TMP_Text description;
+        [SerializeField]
+        private GameObject equipbutton;
+        [SerializeField]
+        private GameObject destroybutton;
 
 
         public void Awake()
@@ -26,6 +30,8 @@ namespace Inventory.UI
             itemImage.gameObject.SetActive(false);
             title.text = "";
             description.text = "";
+            equipbutton.SetActive(false);
+            destroybutton.SetActive(false);
         }
 
         public void SetDescription(Sprite sprite, string itemName,
@@ -35,6 +41,8 @@ namespace Inventory.UI
             itemImage.sprite = sprite;
             title.text = itemName;
             description.text = itemDescription;
+            equipbutton.SetActive(true);
+            destroybutton.SetActive(true);
         }
     }
 }

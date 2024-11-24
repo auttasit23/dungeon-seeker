@@ -188,11 +188,7 @@ namespace Searching
             statPoint += point;
             Debug.Log("increase status "+statPoint);
         }
-
-        public void IncreaseHealth(int healVal)
-        {
-            health += healVal;
-        }
+        
 
         private void UpdateStatText()
         {
@@ -222,7 +218,7 @@ namespace Searching
             }
             if(hitText != null)
             {
-                hitText.text = "HIT" + hitchance;
+                hitText.text = "HIT " + hitchance;
             }
             else
             {
