@@ -99,7 +99,7 @@ public class OOPTreasure : Identity
         if (randomItem != null)
         {
             inventoryData.AddItem(randomItem, 1);
-            Debug.Log($"Random Item {randomItem.Name} of type {randomItem.itemType} added to inventory.");
+            Debug.Log($"Random Item {randomItem.itemName} of type {randomItem.itemType} added to inventory.");
         }
         else
         {

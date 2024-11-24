@@ -16,7 +16,7 @@ namespace Inventory.Model
         public int MaxStackSize { get; set; } = 1;
 
         [field: SerializeField]
-        public string Name { get; set; }
+        public string itemName { get; set; }
 
         [field: SerializeField]
         [field: TextArea]

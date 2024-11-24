@@ -11,25 +11,25 @@ public static class ItemFactory
         switch (itemType)
         {
             case Itemtype.Potion:
-                randomItem.Name = "Potion";
+                randomItem.itemName = "Potion";
                 randomItem.Description = $"Restores {Random.Range(10, 51)} health or mana.";
                 randomItem.ItemImage = GetRandomSprite(spriteCollection.potionSprites);
                 break;
 
             case Itemtype.Weapon:
-                randomItem.Name = "Weapon";
+                randomItem.itemName = "Weapon";
                 randomItem.Description = $"Grants {Random.Range(5, 21)} bonus attack.";
                 randomItem.ItemImage = GetRandomSprite(spriteCollection.weaponSprites);
                 break;
 
             case Itemtype.Armor:
-                randomItem.Name = "Armor";
+                randomItem.itemName = "Armor";
                 randomItem.Description = $"Grants {Random.Range(5, 21)} bonus health.";
                 randomItem.ItemImage = GetRandomSprite(spriteCollection.armorSprites);
                 break;
 
             case Itemtype.Accessory:
-                randomItem.Name = "Accessory";
+                randomItem.itemName = "Accessory";
                 randomItem.Description = $"Grants {Random.Range(5, 21)} bonus evasion stats.";
                 randomItem.ItemImage = GetRandomSprite(spriteCollection.accessorySprites);
                 break;

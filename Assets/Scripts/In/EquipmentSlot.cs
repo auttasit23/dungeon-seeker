@@ -54,7 +54,7 @@ namespace Inventory.UI
             slotImage.enabled = true;
 
             OnEquipItem?.Invoke(inventoryItem.ItemSO);
-            Debug.Log($"Equipped {inventoryItem.ItemSO.Name} in {allowedType} slot.");
+            Debug.Log($"Equipped {inventoryItem.ItemSO.itemName} in {allowedType} slot.");
         }
 
         public void UnequipCurrentItem()
@@ -63,7 +63,7 @@ namespace Inventory.UI
             {
                 OnUnequipItem?.Invoke(currentItem.ItemSO);
                 ResetSlot();
-                Debug.Log($"Unequipped {currentItem.ItemSO.Name} from {allowedType} slot.");
+                Debug.Log($"Unequipped {currentItem.ItemSO.itemName} from {allowedType} slot.");
             }
         }
 
