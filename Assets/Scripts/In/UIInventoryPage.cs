@@ -6,6 +6,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 namespace Inventory.UI
 {
@@ -62,7 +63,7 @@ namespace Inventory.UI
 
         private void HandleShowItemActions(UIInventoryItem inventoryItemUI)
         {
-
+            //inventoryItemUI.ShowContextMenu();
         }
 
         private void HandleEndDrag(UIInventoryItem inventoryItemUI)

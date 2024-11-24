@@ -1,9 +1,9 @@
+using Inventory.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
@@ -18,14 +18,14 @@ namespace Searching
             Attack,
         }
         private PlayerState currentState = PlayerState.Idle;
-        
         public Inventory inventory;
+        private UIInventoryItem itemSlot;
         public float moveCooldown = 0.5f;
         private float moveCooldownTimer = 0f;
         public float maxHealth;
         private bool isFacingRight = true;
         public int statPoint;
-        public GameObject DeadMenu;
+
         [SerializeField] private TextMeshProUGUI statText;
         [SerializeField] private TextMeshProUGUI hpText;
         [SerializeField] private TextMeshProUGUI atkText;
@@ -37,6 +37,7 @@ namespace Searching
             maxHealth = health;
             mapScript = FindObjectOfType<OOPMapGenerator>();
             animator = gameObject.GetComponent<Animator>();
+            itemSlot = FindObjectOfType<UIInventoryItem>(); 
             if (mapScript == null)
             {
                 Debug.LogError("OOPMapGenerator not found in the scene!");
@@ -87,7 +88,9 @@ namespace Searching
                 }
             }
         }
+
         
+
         public void Flip(float direction)
         {
             if (direction > 0 && !isFacingRight)
@@ -155,11 +158,9 @@ namespace Searching
             if (health <= 0)
             {
                 Debug.Log("Player is Dead");
-                DeadMenu.SetActive(true);
-                audioManager.PlaySFX(audioManager.death);
             }
         }
-
+        
         public void AddStat(string statName, int value)
         {
             switch (statName.ToLower())
