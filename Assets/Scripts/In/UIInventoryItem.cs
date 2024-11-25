@@ -21,7 +21,7 @@ namespace Inventory.UI
         [SerializeField]
         private Image borderImage;
         [SerializeField]
-        private TMP_Text equipUI;
+        public TMP_Text equipUI;
         [SerializeField]
         private GameObject contextMenuPrefab; // Prefab for the right-click context menu
         private GameObject contextMenuInstance;
@@ -37,6 +37,7 @@ namespace Inventory.UI
         {
             ResetData();
             Deselect();
+            equipUI.gameObject.SetActive(false);
         }
 
         private void Start()
@@ -51,7 +52,6 @@ namespace Inventory.UI
             empty = true;
             ItemSO = null;
             isEquipped = false;
-            equipUI.gameObject.SetActive(false);
         }
         
 
@@ -129,34 +129,34 @@ namespace Inventory.UI
 
             int slotIndex = GetSlotIndex(ItemSO);
 
-            // Ensure the slot index is valid and within the 3-slot limit
+            // ตรวจสอบว่า Slot Index ถูกต้อง
             if (slotIndex < 0 || slotIndex >= equipment.equipmentSlots.Length)
             {
                 Debug.LogWarning("Invalid slot index. Cannot toggle equip.");
                 return;
             }
 
-            // Check if the item is already equipped in the same slot
-            if (isEquipped && equipment.equipmentSlots[slotIndex] == ItemSO)
+            // ใช้ equipment.equipmentSlots ในการตรวจสอบสถานะการสวมใส่
+            if (equipment.equipmentSlots[slotIndex] == ItemSO)
             {
-                UnequipItemFromSlot(slotIndex); // Unequip the item
+                UnequipItemFromSlot(slotIndex);
                 Debug.Log($"{ItemSO.itemName} unequipped from slot {slotIndex}.");
-                CloseContextMenu();
+                equipment.UpdateEtext();
                 return;
             }
 
-            // Check if the slot is occupied by another item
+            // ตรวจสอบว่า Slot มีไอเทมอยู่แล้ว
             if (equipment.equipmentSlots[slotIndex] != null)
             {
-                Debug.LogWarning($"Cannot equip {ItemSO.itemName}: Slot {slotIndex} is already occupied by {equipment.equipmentSlots[slotIndex].itemName}.");
-                return;
+                UnequipItemFromSlot(slotIndex);
+                equipment.UpdateEtext();
             }
 
-            // Equip the new item
+            // สวมใส่ไอเทมใหม่
             EquipItemToSlot(slotIndex);
             Debug.Log($"{ItemSO.itemName} equipped in slot {slotIndex}.");
-            CloseContextMenu();
         }
+
 
 
 
@@ -165,11 +165,7 @@ namespace Inventory.UI
             equipment.equipmentSlots[slotIndex] = ItemSO;
             ApplyItemStats(ItemSO, true);
             isEquipped = true;
-            if (equipUI != null)
-            {
-                equipUI.gameObject.SetActive(true);
-                equipUI.text = "E";
-            }
+            equipment.UpdateEtext();
         }
 
 
@@ -189,13 +185,24 @@ namespace Inventory.UI
                 Debug.Log($"{itemToUnequip.itemName} unequipped from slot {slotIndex}");
 
                 isEquipped = false;
-                
-                if (equipUI != null)
-                {
-                    equipUI.gameObject.SetActive(false);
-                }
+                equipment.UpdateEtext();
             }
         }
+        
+        private UIInventoryItem FindSlotUIByIndex(int slotIndex)
+        {
+            var inventorySlots = FindObjectsOfType<UIInventoryItem>();
+            foreach (var slot in inventorySlots)
+            {
+                int slotItemIndex = slot.GetSlotIndex(slot.ItemSO);
+                if (slotItemIndex == slotIndex)
+                {
+                    return slot;
+                }
+            }
+            return null;
+        }
+
 
 
         private void ApplyItemStats(ItemSO item, bool isAdding)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Inventory.UI;
 
 namespace Inventory.Model
 {
@@ -38,12 +39,28 @@ namespace Inventory.Model
                         item = item,
                         quantity = quantity
                     };
+
+                    // ตรวจสอบว่ามีไอเทมที่สวมใส่อยู่และอัปเดต
+                    UpdateEquippedStatus(item);
                     InformAboutChange();
                     return;
                 }
-                
             }
         }
+        
+        private void UpdateEquippedStatus(ItemSO item)
+        {
+            var equippedItems = FindObjectOfType<EquipmentSlotManager>().equipmentSlots;
+            for (int i = 0; i < equippedItems.Length; i++)
+            {
+                if (equippedItems[i] == item)
+                {
+                    Debug.Log($"Item {item.itemName} is already equipped in slot {i}");
+                    return;
+                }
+            }
+        }
+
         
         public void RemoveItem(ItemSO itemToRemove)
         {

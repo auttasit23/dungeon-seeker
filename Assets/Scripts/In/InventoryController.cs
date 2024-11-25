@@ -18,11 +18,14 @@ namespace Inventory
         
         public List<InventoryItem> initialItems = new List<InventoryItem>();
         
+        public EquipmentSlotManager equipment;
+
 
         private void Start()
         {
             PrepareUI();
             PrepareInventoryData();
+            equipment = FindAnyObjectByType<EquipmentSlotManager>();
             
         }
 
@@ -99,6 +102,7 @@ namespace Inventory
                 if (inventoryUI.isActiveAndEnabled == false)
                 {
                     inventoryUI.Show();
+                    equipment.UpdateEtext();
                     foreach (var item in inventoryData.GetCurrentInventoryState())
                     {
                         inventoryUI.UpdateData(item.Key, item.Value.item, item.Value.quantity);
