@@ -189,6 +189,39 @@ namespace Inventory.UI
             }
         }
         
+        public void UnEquip()
+        {
+            if (ItemSO == null)
+            {
+                Debug.LogWarning("No item is currently equipped in this slot.");
+                return;
+            }
+
+            int slotIndex = GetSlotIndex(ItemSO);
+    
+            if (slotIndex < 0 || slotIndex >= equipment.equipmentSlots.Length)
+            {
+                Debug.LogWarning("Invalid slot index. Cannot unequip item.");
+                return;
+            }
+
+            ItemSO itemToUnequip = equipment.equipmentSlots[slotIndex];
+            if (itemToUnequip != null)
+            {
+                ApplyItemStats(itemToUnequip, false);
+                equipment.equipmentSlots[slotIndex] = null;
+                Debug.Log($"{itemToUnequip.itemName} has been unequipped from slot {slotIndex}.");
+
+                isEquipped = false;
+                equipment.UpdateEtext(); // อัปเดต UI
+            }
+            else
+            {
+                Debug.Log("This slot is already empty.");
+            }
+        }
+
+        
         private UIInventoryItem FindSlotUIByIndex(int slotIndex)
         {
             var inventorySlots = FindObjectsOfType<UIInventoryItem>();
@@ -250,6 +283,7 @@ namespace Inventory.UI
 
         public void DestroyItem()
         {
+            UnEquip();
             if (empty)
             {
                 Debug.LogWarning("Cannot destroy an empty slot.");
@@ -263,7 +297,7 @@ namespace Inventory.UI
 
             ResetData();
             CloseContextMenu();
-
+            equipment.UpdateEtext();
             OnItemDestroyed?.Invoke(this);
         }
 
@@ -285,6 +319,7 @@ namespace Inventory.UI
         public void OnEndDrag(PointerEventData eventData)
         {
             OnItemEndDrag?.Invoke(this);
+            equipment.UpdateEtext();
         }
 
         public void OnDrop(PointerEventData eventData)

@@ -93,10 +93,6 @@ public class OOPTreasure : Identity
     {
         Debug.Log("Executed action for option 1");
         ChooseRandomEquipment();
-        ChooseRandomEquipment();
-        ChooseRandomEquipment();
-        ChooseRandomEquipment();
-        ChooseRandomEquipment();
         Destroy(gameObject);
         
 

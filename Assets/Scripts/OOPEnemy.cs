@@ -212,17 +212,20 @@ namespace Searching
             {
                 Debug.LogWarning("Path is null. No path could be generated.");
             }
-            
-            if (path.Count > 0 || path == null)
-            {
-                int randomValue = Random.Range(0, 100);
-                if (randomValue < 50)
-                {
-                    Node nextNode = path[0];
-                    currentNode = nextNode;
-                    MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
-                }
 
+            if (path != null)
+            {
+                if (path.Count > 0 || path == null)
+                {
+                    int randomValue = Random.Range(0, 100);
+                    if (randomValue < 50)
+                    {
+                        Node nextNode = path[0];
+                        currentNode = nextNode;
+                        MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
+                    }
+
+                }
             }
         }
         
@@ -279,7 +282,10 @@ namespace Searching
         {
             Vector2 oldPosition = new Vector2(transform.position.x, transform.position.y);
             Vector2 newPosition = new Vector2(x, y);
-            
+            if (player == null)
+            {
+                return;
+            }
             if (IsPlayer(newPosition))
             {
                 return;
@@ -305,7 +311,7 @@ namespace Searching
                 {
                     return;
                 }
-                if (IsPotion(newPosition) && path[0] != null)
+                if (IsPotion(newPosition) && path[0] != null && player != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -315,7 +321,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsExit(newPosition) && path[0] != null)
+                if (IsExit(newPosition) && path[0] != null && player != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -325,7 +331,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsKey(newPosition) && path[0] != null)
+                if (IsKey(newPosition) && path[0] != null && player != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -335,7 +341,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsTreasure(newPosition) && path[0] != null)
+                if (IsTreasure(newPosition) && path[0] != null && player != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);
@@ -345,7 +351,7 @@ namespace Searching
                     StartCoroutine(MoveSmoothly(path[0].transform.position));
                     return;
                 }
-                if (IsEnemy(newPosition) && newPosition != oldPosition && path[0] != null)
+                if (IsEnemy(newPosition) && newPosition != oldPosition && path[0] != null && player != null)
                 {
                     Node startNode = AStarManager.instance.FindNearestNode(transform.position);
                     Node endNode = AStarManager.instance.FindNearestNode(player.position);

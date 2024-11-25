@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
+using UnityEngine.SceneManagement;
 
 namespace Searching
 {
@@ -25,6 +26,7 @@ namespace Searching
         public float maxHealth;
         private bool isFacingRight = true;
         public int statPoint;
+        public GameObject DeadMenu;
 
         [SerializeField] private TextMeshProUGUI statText;
         [SerializeField] private TextMeshProUGUI hpText;
@@ -158,6 +160,7 @@ namespace Searching
             if (health <= 0)
             {
                 Debug.Log("Player is Dead");
+                DeadMenu.SetActive(true);
             }
         }
         

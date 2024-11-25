@@ -57,7 +57,7 @@ namespace Searching
             }
             if (Input.GetKeyDown(KeyCode.Y))
             {
-                SceneManager.LoadScene("Map");
+                SceneManager.LoadScene("MenuScene");
             }
             
             foreach (Transform childnode in nodesParent)
@@ -113,6 +113,7 @@ namespace Searching
             tilemapVisualizer.Clear();
             ClearNodes();
             RemoveAllEnemies();
+            player.FullHeal();
             GameObject enemy = GameObject.Find("Enemy");
 
             if (enemy != null)
