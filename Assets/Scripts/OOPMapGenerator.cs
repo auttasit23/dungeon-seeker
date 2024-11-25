@@ -11,6 +11,8 @@ namespace Searching
     {
         [Header("Set Player")]
         public OOPPlayer player;
+        
+        [Header("Set Enemy")]
         public int maxEnemy = 1;
 
         [Header("Set Exit")]
@@ -27,9 +29,11 @@ namespace Searching
         public Transform enemyParent;
         public Transform potionParent;
         
+        [Header("Set Treasure")]
         public bool selectingTreasure = false;
         public GameObject choose;
         
+        [Header("Set Data")]
         public OOPItemKey keys;
         public Dictionary<Vector2, List<OOPTreasure>> treasure = new Dictionary<Vector2, List<OOPTreasure>>();
         public Dictionary<Vector2, List<OOPItemPotion>> potion = new Dictionary<Vector2, List<OOPItemPotion>>();

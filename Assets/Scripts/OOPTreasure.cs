@@ -111,7 +111,7 @@ public class OOPTreasure : Identity
         mapGenerator.player.Heal(25f);
         Destroy(gameObject);
     }
-
+    
     public void ChooseRandomEquipment()
     {
         Itemtype[] equipmentTypes = { Itemtype.Weapon, Itemtype.Armor, Itemtype.Accessory };
@@ -132,13 +132,11 @@ public class OOPTreasure : Identity
             Debug.LogError("Random item is null!");
         }
     }
-    
     private ItemSO CreateItemClone(ItemSO originalItem)
     {
         ItemSO clonedItem = Instantiate(originalItem);
         return clonedItem;
     }
-
     private void ModifyItemStats(ItemSO item)
     {
         int randomStatBoost = UnityEngine.Random.Range(1, 3+GameManager.level);
@@ -182,8 +180,6 @@ public class OOPTreasure : Identity
         item.Description = $"{item.Description} {item.itemStat}";
         FindObjectOfType<ItemSpriteRandomizer>().AssignRandomSprite(item);
     }
-    
-
     public ItemSO GetRandomItemByType(Itemtype type)
     {
         if (itemDatabase == null)

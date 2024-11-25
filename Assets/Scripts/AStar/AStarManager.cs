@@ -16,7 +16,6 @@ public class AStarManager : MonoBehaviour
     {
         ResetNodeValues();
     }
-
     public void ResetNodeValues()
     {
         foreach (Node n in FindObjectsOfType<Node>())
@@ -26,7 +25,6 @@ public class AStarManager : MonoBehaviour
             n.previous = null;
         }
     }
-
     public List<Node> GeneratePath(Node start, Node end)
     {
         List<Node> openSet = new List<Node>();
@@ -82,9 +80,6 @@ public class AStarManager : MonoBehaviour
         
         return null;
     }
-
-    
-
     private List<Node> ReconstructPath(Node start, Node end)
     {
         List<Node> path = new List<Node>();
@@ -101,8 +96,6 @@ public class AStarManager : MonoBehaviour
 
         return path;
     }
-
-
     public Node FindNearestNode(Vector2 pos)
     {
         Node foundNode = null;
@@ -119,7 +112,6 @@ public class AStarManager : MonoBehaviour
         }
         return foundNode;
     }
-
     public Node FindFurthestNode(Vector2 pos)
     {
         Node foundNode = null;
@@ -134,7 +126,6 @@ public class AStarManager : MonoBehaviour
                 foundNode = node;
             }
         }
-
         return foundNode;
     }
     public Node FindNearestWalkableNode(Vector2 pos)

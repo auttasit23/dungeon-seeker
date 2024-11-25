@@ -92,7 +92,6 @@ public class DungeonGenerator : MonoBehaviour
             PlaceItemsInRoom(room);
         }
     }
-
     private HashSet<Vector2Int> ConnectRooms(List<Vector2Int> roomCenters)
     {
         HashSet<Vector2Int> corridors = new HashSet<Vector2Int>();
@@ -109,7 +108,6 @@ public class DungeonGenerator : MonoBehaviour
         }
         return corridors;
     }
-    
     private void CreateNodeAtPosition(Vector2Int position)
     {
         if (!nodes.ContainsKey(position))
@@ -123,8 +121,6 @@ public class DungeonGenerator : MonoBehaviour
             nodes[position] = node;
         }
     }
-
-    
     private void ConnectNodes(HashSet<Vector2Int> floor)
     {
         foreach (var position in floor)
@@ -152,7 +148,6 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
-    
     private void PlaceItemsInRoom(BoundsInt room)
     {
         foreach (var item in itemDataList)
@@ -196,11 +191,6 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
-
-    
-
-
-    
     public bool CheckNodeSurroundings(Vector2Int position)
     {
         if (!nodes.ContainsKey(position)) return false;
@@ -226,9 +216,6 @@ public class DungeonGenerator : MonoBehaviour
         
         return connectedCount == directions.Length;
     }
-    
-
-    
     public void ClearNodes()
     {
         if (nodesParent != null)
@@ -245,8 +232,6 @@ public class DungeonGenerator : MonoBehaviour
     {
         tilemapVisualizer.Clear();
     }
-
-
     
     private HashSet<Vector2Int> CreateCorridor(Vector2Int currentRoomCenter, Vector2Int destination)
     {
@@ -380,8 +365,6 @@ public class DungeonGenerator : MonoBehaviour
 
         return assignedRoomTypes;
     }
-
-
     private void OnDrawGizmos()
     {
         if (roomsList == null || roomTypes == null || roomsList.Count != roomTypes.Count) return;

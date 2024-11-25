@@ -70,8 +70,6 @@ namespace Searching
             }
             GetRemainEnergy();
         }
-        
-
         private void Update()
         {
             MoveAlongPath();
@@ -97,7 +95,6 @@ namespace Searching
                 FlipCharacter();
             }
         }
-
         private void FlipCharacter()
         {
             isFacingRight = !isFacingRight;
@@ -105,7 +102,6 @@ namespace Searching
             scale.x *= -1;
             transform.localScale = scale;
         }
-        
         public void EnemyUpdateState()
         {
             if (currentState == EnemyState.Idle)
@@ -127,8 +123,6 @@ namespace Searching
                 animator.SetBool("attack", true);
             }
         }
-        
-        
         public IEnumerator EnemyAttackAnimator()
         {
             currentState = EnemyState.Attack;
@@ -156,7 +150,6 @@ namespace Searching
                     textMesh.color = Color.green;
                     Debug.Log("Enemy dodge");
                 }
-
                 if (mapScript.player.evasion > randomValue)
                 {
                     GameObject points = Instantiate(floatingPoints, new Vector3(mapScript.player.transform.position.x, mapScript.player.transform.position.y, -1), Quaternion.identity);
@@ -178,14 +171,11 @@ namespace Searching
                 }
             }
         }
-        
-
         public void Attack(OOPPlayer _player)
         {
             StartCoroutine(EnemyAttackAnimator());
             _player.TakeDamage(damage);
         }
-
         protected override void CheckDead()
         {
             if (health <= 0)
@@ -194,7 +184,6 @@ namespace Searching
                 Destroy(gameObject);
             }
         }
-        
         public void CreatePath()
         {
             if (Random.Range(0, 100) >= 50) // 50% ไม่เดิน
@@ -224,9 +213,6 @@ namespace Searching
                 MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
             }
         }
-
-
-        
         private void MoveAlongPath()
         {
             if (!shouldMove || path == null || currentPathIndex >= path.Count)
@@ -240,8 +226,6 @@ namespace Searching
                 shouldMove = false;
             }
         }
-
-
         private void GeneratePathToPlayer()
         {
             if (player == null)
@@ -281,15 +265,11 @@ namespace Searching
             CreatePath();
             MoveOneStepTowardsPlayer();
         }
-
         private IEnumerator RetryGeneratePath()
         {
             yield return new WaitForSeconds(0.5f);
             GeneratePathToPlayer();
         }
-
-
-
         public void MoveOneStepTowardsPlayer()
         {
             if (currentPathIndex >= path.Count)
@@ -299,7 +279,6 @@ namespace Searching
             }
             shouldMove = true;
         }
-
         private void MoveToPosition(float x, float y)
         {
             Vector2 oldPosition = new Vector2(transform.position.x, transform.position.y);
@@ -347,7 +326,6 @@ namespace Searching
             
             UpdateEnemyPositionInMap(oldPosition, newPosition);
         }
-        
         private void UpdateEnemyPositionInMap(Vector2 oldPosition, Vector2 newPosition)
         {
             if (mapScript.enemies.ContainsKey(oldPosition))
@@ -365,7 +343,6 @@ namespace Searching
             }
             mapScript.enemies[newPosition].Add(this);
         }
-        
         private bool HandleObstacleInNewPosition(Vector2 newPosition)
         {
             if (IsPlayer(newPosition))
