@@ -13,8 +13,24 @@ public class OOPTreasure : Identity
     private OOPPlayer player;
     [SerializeField] private InventorySO inventoryData; 
     [SerializeField] private ItemDatabaseSO itemDatabase;
-
-
+    
+    private void Update()
+    {
+        if (mapGenerator.treasure.ContainsKey(transform.position))
+        {
+            mapGenerator.treasure[transform.position].Remove(this);
+            if (mapGenerator.treasure[transform.position].Count == 0)
+            {
+                mapGenerator.treasure.Remove(transform.position);
+            }
+        }
+        if (!mapGenerator.treasure.ContainsKey(transform.position))
+        {
+            mapGenerator.treasure[transform.position] = new List<OOPTreasure>();
+        }
+        mapGenerator.treasure[transform.position].Add(this);
+    }
+    
     private void Start()
     {
         player = FindObjectOfType<OOPPlayer>();
@@ -27,8 +43,11 @@ public class OOPTreasure : Identity
 
     public override void Hit()
     {
-        StartCoroutine(WaitForInput());
-        audioManager.PlaySFX(audioManager.chest);
+        if (this != null)
+        {
+            StartCoroutine(WaitForInput());
+            audioManager.PlaySFX(audioManager.chest);
+        }
     }
 
     private IEnumerator WaitForInput()
@@ -92,6 +111,7 @@ public class OOPTreasure : Identity
         mapGenerator.player.Heal(25f);
         Destroy(gameObject);
     }
+
     public void ChooseRandomEquipment()
     {
         Itemtype[] equipmentTypes = { Itemtype.Weapon, Itemtype.Armor, Itemtype.Accessory };
@@ -101,15 +121,68 @@ public class OOPTreasure : Identity
 
         if (randomItem != null)
         {
-            inventoryData.AddItem(randomItem, 1);
-            Debug.Log($"Random Item {randomItem.itemName} of type {randomItem.itemType} added to inventory.");
+            ItemSO clonedItem = CreateItemClone(randomItem);
+            ModifyItemStats(clonedItem);
+            inventoryData.AddItem(clonedItem, 1);
+            Debug.Log(
+                $"Random Item {clonedItem.itemName} of type {clonedItem.itemType} added to inventory with modified stats.");
         }
         else
         {
             Debug.LogError("Random item is null!");
         }
-
     }
+    
+    private ItemSO CreateItemClone(ItemSO originalItem)
+    {
+        ItemSO clonedItem = Instantiate(originalItem);
+        return clonedItem;
+    }
+
+    private void ModifyItemStats(ItemSO item)
+    {
+        int randomStatBoost = UnityEngine.Random.Range(1, 3+GameManager.level);
+        if (item.itemType == Itemtype.Armor)
+        {
+            List<string> suffixes = new List<string>
+            {
+                "Flame", "Frost", "Shadow", "Light", "Storm", 
+                "Earth", "Mystic", "Venom", "Thunder", "Wind", 
+                "Ocean", "Crystal", "Inferno", "Guardian", "Chaos", 
+                "Void", "Phoenix", "Dragon", "Eclipse", "Star"
+            };
+            string randomSuffix = suffixes[UnityEngine.Random.Range(0, suffixes.Count)];
+            item.name = $"Armor of {randomSuffix}";
+        }
+        if (item.itemType == Itemtype.Weapon)
+        {
+            List<string> suffixes = new List<string>
+            {
+                "Flame", "Frost", "Shadow", "Light", "Storm", 
+                "Earth", "Mystic", "Venom", "Thunder", "Wind", 
+                "Ocean", "Crystal", "Inferno", "Guardian", "Chaos", 
+                "Void", "Phoenix", "Dragon", "Eclipse", "Star"
+            };
+            string randomSuffix = suffixes[UnityEngine.Random.Range(0, suffixes.Count)];
+            item.name = $"{randomSuffix} Sword";
+        }
+        if (item.itemType == Itemtype.Accessory)
+        {
+            List<string> suffixes = new List<string>
+            {
+                "Flame", "Frost", "Shadow", "Light", "Storm", 
+                "Earth", "Mystic", "Venom", "Thunder", "Wind", 
+                "Ocean", "Crystal", "Inferno", "Guardian", "Chaos", 
+                "Void", "Phoenix", "Dragon", "Eclipse", "Star"
+            };
+            string randomSuffix = suffixes[UnityEngine.Random.Range(0, suffixes.Count)];
+            item.name = $"Bracelet of {randomSuffix}";
+        }
+        item.itemStat += randomStatBoost;
+        item.Description = $"{item.Description} {item.itemStat}";
+        FindObjectOfType<ItemSpriteRandomizer>().AssignRandomSprite(item);
+    }
+    
 
     public ItemSO GetRandomItemByType(Itemtype type)
     {
@@ -130,5 +203,4 @@ public class OOPTreasure : Identity
         return itemsOfType[UnityEngine.Random.Range(0, itemsOfType.Count)];
     }
 
-    
 }

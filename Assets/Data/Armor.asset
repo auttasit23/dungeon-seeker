@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f6d52ab717466e4599f2af823649eb3, type: 3}
-  m_Name: Wooden_Armor
+  m_Name: Armor
   m_EditorClassIdentifier: 
   <IsStackable>k__BackingField: 0
   <MaxStackSize>k__BackingField: 1
   <itemName>k__BackingField: 
-  <Description>k__BackingField: maxhealth +10
+  <Description>k__BackingField: Max Health +
   <ItemImage>k__BackingField: {fileID: 21300000, guid: 541ae020fad5efc48a89a38c6218a601, type: 3}
   <itemType>k__BackingField: 2
-  <itemStat>k__BackingField: 10
+  <itemStat>k__BackingField: 2

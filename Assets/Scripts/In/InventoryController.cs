@@ -46,6 +46,11 @@ namespace Inventory
                 inventoryUI.UpdateData(item.Key, item.Value.item, item.Value.quantity);
             }
         }
+        
+        public void RemoveItemFromInventory(ItemSO itemToRemove)
+        {
+            inventoryData.RemoveItem(itemToRemove);
+        }
 
         private void PrepareUI()
         {

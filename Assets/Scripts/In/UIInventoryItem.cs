@@ -26,12 +26,12 @@ namespace Inventory.UI
         private GameObject contextMenuPrefab; // Prefab for the right-click context menu
         private GameObject contextMenuInstance;
 
-        public event Action<UIInventoryItem> OnItemClicked, OnItemDroppedOn, OnItemBeginDrag, OnItemEndDrag, OnRightMouseBtnClick;
+        public event Action<UIInventoryItem> OnItemClicked, OnItemDroppedOn, OnItemBeginDrag, OnItemEndDrag, OnRightMouseBtnClick, OnItemDestroyed;
 
         private bool empty = true;
         private bool isEquipped = false;
         public ItemSO ItemSO { get; private set; }
-        public ItemSO[] equipmentSlots = new ItemSO[3];
+        public EquipmentSlotManager equipment;
 
         public void Awake()
         {
@@ -41,6 +41,7 @@ namespace Inventory.UI
 
         private void Start()
         {
+            equipment = FindAnyObjectByType<EquipmentSlotManager>();
             player = FindObjectOfType<OOPPlayer>();
         }
 
@@ -52,11 +53,7 @@ namespace Inventory.UI
             isEquipped = false;
             equipUI.gameObject.SetActive(false);
         }
-
-        public void Deselect()
-        {
-            borderImage.enabled = false;
-        }
+        
 
         public void SetData(ItemSO item, int quantity)
         {
@@ -77,19 +74,32 @@ namespace Inventory.UI
         {
             borderImage.enabled = true;
         }
+        public void Deselect()
+        {
+            borderImage.enabled = false;
+        }
 
         public void OnPointerClick(PointerEventData pointerData)
         {
             if (pointerData.button == PointerEventData.InputButton.Right)
             {
-                /*ShowContextMenu(pointerData);*/
+                // กรณีคลิกขวา
                 OnRightMouseBtnClick?.Invoke(this);
+            }
+            else if (!empty)
+            {
+                // กรณีคลิกซ้ายบนไอเท็ม
+                OnItemClicked?.Invoke(this);
             }
             else
             {
-                OnItemClicked?.Invoke(this);
+                // กรณีคลิกช่องว่าง
+                var inventoryPage = GetComponentInParent<UIInventoryPage>();
+                inventoryPage?.ResetSelection(); // รีเซ็ตการเลือก
             }
         }
+
+
 
         /*public void ShowContextMenu(PointerEventData pointerData)
         {
@@ -120,38 +130,40 @@ namespace Inventory.UI
             int slotIndex = GetSlotIndex(ItemSO);
 
             // Ensure the slot index is valid and within the 3-slot limit
-            if (slotIndex < 0 || slotIndex >= equipmentSlots.Length)
+            if (slotIndex < 0 || slotIndex >= equipment.equipmentSlots.Length)
             {
                 Debug.LogWarning("Invalid slot index. Cannot toggle equip.");
                 return;
             }
 
-            if (isEquipped)
+            // Check if the item is already equipped in the same slot
+            if (isEquipped && equipment.equipmentSlots[slotIndex] == ItemSO)
             {
-                // Unequip the current item
-                UnequipItemFromSlot(slotIndex);
-                Debug.Log($"{ItemSO.itemName} unequipped.");
+                UnequipItemFromSlot(slotIndex); // Unequip the item
+                Debug.Log($"{ItemSO.itemName} unequipped from slot {slotIndex}.");
+                CloseContextMenu();
+                return;
             }
-            else
-            {
-                // Check if the slot is occupied by another item
-                if (equipmentSlots[slotIndex] != null)
-                {
-                    Debug.Log($"Replacing {equipmentSlots[slotIndex].itemName} in slot {slotIndex} with {ItemSO.itemName}.");
-                    UnequipItemFromSlot(slotIndex); // Unequip the existing item
-                }
 
-                // Equip the new item
-                EquipItemToSlot(slotIndex);
-                Debug.Log($"{ItemSO.itemName} equipped in slot {slotIndex}.");
+            // Check if the slot is occupied by another item
+            if (equipment.equipmentSlots[slotIndex] != null)
+            {
+                Debug.LogWarning($"Cannot equip {ItemSO.itemName}: Slot {slotIndex} is already occupied by {equipment.equipmentSlots[slotIndex].itemName}.");
+                return;
             }
+
+            // Equip the new item
+            EquipItemToSlot(slotIndex);
+            Debug.Log($"{ItemSO.itemName} equipped in slot {slotIndex}.");
             CloseContextMenu();
         }
 
+
+
         private void EquipItemToSlot(int slotIndex)
         {
-            equipmentSlots[slotIndex] = ItemSO;
-            ApplyItemStats(ItemSO, true); // Add the item's stats to the player
+            equipment.equipmentSlots[slotIndex] = ItemSO;
+            ApplyItemStats(ItemSO, true);
             isEquipped = true;
             if (equipUI != null)
             {
@@ -160,28 +172,31 @@ namespace Inventory.UI
             }
         }
 
+
         private void UnequipItemFromSlot(int slotIndex)
         {
-            if (slotIndex < 0 || slotIndex >= equipmentSlots.Length)
+            if (slotIndex < 0 || slotIndex >= equipment.equipmentSlots.Length)
             {
                 Debug.LogWarning("Invalid slot index. Cannot unequip item.");
                 return;
             }
 
-            ItemSO itemToUnequip = equipmentSlots[slotIndex];
+            ItemSO itemToUnequip = equipment.equipmentSlots[slotIndex];
             if (itemToUnequip != null)
             {
-                ApplyItemStats(itemToUnequip, false); // Remove the stats of the unequipped item
-                equipmentSlots[slotIndex] = null; // Clear the slot
+                ApplyItemStats(itemToUnequip, false);
+                equipment.equipmentSlots[slotIndex] = null;
                 Debug.Log($"{itemToUnequip.itemName} unequipped from slot {slotIndex}");
 
-                // Hide the equip UI text
+                isEquipped = false;
+                
                 if (equipUI != null)
                 {
                     equipUI.gameObject.SetActive(false);
                 }
             }
         }
+
 
         private void ApplyItemStats(ItemSO item, bool isAdding)
         {
@@ -228,10 +243,24 @@ namespace Inventory.UI
 
         public void DestroyItem()
         {
+            if (empty)
+            {
+                Debug.LogWarning("Cannot destroy an empty slot.");
+                return;
+            }
+
             Debug.Log($"{ItemSO?.itemName ?? "Unknown item"} destroyed");
+    
+            // อัปเดตข้อมูลใน Inventory Data
+            FindObjectOfType<InventoryController>().RemoveItemFromInventory(this.ItemSO);
+
             ResetData();
             CloseContextMenu();
+
+            OnItemDestroyed?.Invoke(this);
         }
+
+
 
         private void CloseContextMenu()
         {

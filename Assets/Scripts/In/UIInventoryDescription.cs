@@ -18,7 +18,7 @@ namespace Inventory.UI
         private GameObject equipbutton;
         [SerializeField]
         private GameObject destroybutton;
-
+        
 
         public void Awake()
         {
@@ -34,15 +34,23 @@ namespace Inventory.UI
             destroybutton.SetActive(false);
         }
 
-        public void SetDescription(Sprite sprite, string itemName,
-            string itemDescription)
+        public void SetDescription(Sprite sprite, string itemName, string itemDescription, UIInventoryItem selectedItem)
         {
             itemImage.gameObject.SetActive(true);
             itemImage.sprite = sprite;
             title.text = itemName;
             description.text = itemDescription;
+
             equipbutton.SetActive(true);
             destroybutton.SetActive(true);
+
+            // โยงปุ่มกับไอเทมที่เลือก
+            equipbutton.GetComponent<Button>().onClick.RemoveAllListeners();
+            equipbutton.GetComponent<Button>().onClick.AddListener(() => selectedItem.ToggleEquip());
+
+            destroybutton.GetComponent<Button>().onClick.RemoveAllListeners();
+            destroybutton.GetComponent<Button>().onClick.AddListener(() => selectedItem.DestroyItem());
         }
+
     }
 }

@@ -26,6 +26,8 @@ namespace Inventory.UI
 
         
         List<UIInventoryItem> listOfUIItems = new List<UIInventoryItem>();
+        
+        private UIInventoryItem currentlySelectedItem = null;
 
         public event Action<int> OnDescriptionRequested,
                         OnItemActionRequested,
@@ -46,13 +48,16 @@ namespace Inventory.UI
                 UIInventoryItem uiItem = Instantiate(itemPrefab, Vector3.zero, Quaternion.identity);
                 uiItem.transform.SetParent(contentPanel);
                 listOfUIItems.Add(uiItem);
+
                 uiItem.OnItemClicked += HandleItemSelection;
                 uiItem.OnItemBeginDrag += HandleBeginDrag;
                 uiItem.OnItemDroppedOn += HandleSwap;
                 uiItem.OnItemEndDrag += HandleEndDrag;
                 uiItem.OnRightMouseBtnClick += HandleShowItemActions;
+                uiItem.OnItemDestroyed += HandleItemDestroyed; // เพิ่ม Listener
             }
         }
+
         public void UpdateData(int itemIndex, ItemSO itemData, int itemQuantity)
         {
             if (listOfUIItems.Count > itemIndex)
@@ -76,11 +81,15 @@ namespace Inventory.UI
             int index = listOfUIItems.IndexOf(inventoryItemUI);
             if (index == -1)
             {
+                Debug.LogWarning("Invalid index in HandleSwap: item not found in list.");
                 return;
             }
+
             OnSwapItems?.Invoke(currentlyDraggedItemIndex, index);
             HandleItemSelection(inventoryItemUI);
         }
+
+
 
         private void ResetDraggedItem()
         {
@@ -91,24 +100,46 @@ namespace Inventory.UI
         {
             int index = listOfUIItems.IndexOf(inventoryItemUI);
             if (index == -1)
+            {
+                Debug.LogWarning("Invalid index in HandleBeginDrag: item not found in list.");
                 return;
+            }
+
             currentlyDraggedItemIndex = index;
             HandleItemSelection(inventoryItemUI);
             OnStartDragging?.Invoke(index);
-
         }
+
+        
+        private void HandleItemDestroyed(UIInventoryItem inventoryItemUI)
+        {
+            int index = listOfUIItems.IndexOf(inventoryItemUI);
+            if (index != -1 && currentlySelectedItem == inventoryItemUI)
+            {
+                ResetSelection();
+            }
+        }
+        
         public void CreateDraggedItem(Sprite sprite, int quantity)
         {
             mouseFollower.Toggle(true);
             mouseFollower.SetData(sprite, quantity);
         }
+        
         private void HandleItemSelection(UIInventoryItem inventoryItemUI)
         {
+            if (inventoryItemUI == null || inventoryItemUI.ItemSO == null) return;
+
             int index = listOfUIItems.IndexOf(inventoryItemUI);
             if (index == -1)
                 return;
+
+            currentlySelectedItem = inventoryItemUI;
             OnDescriptionRequested?.Invoke(index);
+
         }
+
+
 
         public void Show()
         {
@@ -122,7 +153,9 @@ namespace Inventory.UI
         {
             itemDescription.ResetDescription();
             DeselectAllItems();
+            currentlySelectedItem = null;
         }
+
 
         private void DeselectAllItems()
         {
@@ -140,7 +173,7 @@ namespace Inventory.UI
 
         internal void UpdateDescription(int itemIndex, Sprite itemImage, string name, string description)
         {
-            itemDescription.SetDescription(itemImage, name, description);
+            itemDescription.SetDescription(itemImage, name, description, currentlySelectedItem);
             DeselectAllItems();
             listOfUIItems[itemIndex].Select();
         }

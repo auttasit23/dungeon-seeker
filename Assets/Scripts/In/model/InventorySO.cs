@@ -44,6 +44,29 @@ namespace Inventory.Model
                 
             }
         }
+        
+        public void RemoveItem(ItemSO itemToRemove)
+        {
+            for (int i = 0; i < inventoryItems.Count; i++)
+            {
+                if (inventoryItems[i].item == itemToRemove)
+                {
+                    inventoryItems[i] = InventoryItem.GetEmptyItem();
+                    InformAboutChange(); // แจ้ง UI ให้รีเฟรชข้อมูล
+                    return;
+                }
+            }
+        }
+        /*public void RemoveItemAt(int index)
+        {
+            if (index >= 0 && index < inventoryItems.Count)
+            {
+                inventoryItems[index] = InventoryItem.GetEmptyItem();
+                InformAboutChange();
+            }
+        }*/
+
+
 
         public Dictionary<int, InventoryItem> GetCurrentInventoryState()
         {
@@ -71,11 +94,20 @@ namespace Inventory.Model
 
         public void SwapItems(int itemIndex_1, int itemIndex_2)
         {
+            if (itemIndex_1 < 0 || itemIndex_1 >= inventoryItems.Count ||
+                itemIndex_2 < 0 || itemIndex_2 >= inventoryItems.Count)
+            {
+                Debug.LogWarning($"Invalid indices for SwapItems: {itemIndex_1}, {itemIndex_2}");
+                return;
+            }
+
             InventoryItem item1 = inventoryItems[itemIndex_1];
             inventoryItems[itemIndex_1] = inventoryItems[itemIndex_2];
             inventoryItems[itemIndex_2] = item1;
+
             InformAboutChange();
         }
+
 
         private void InformAboutChange()
         {
