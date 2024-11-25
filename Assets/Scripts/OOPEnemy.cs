@@ -128,12 +128,6 @@ namespace Searching
             }
         }
         
-        public IEnumerator EnemyMoveAnimator()
-        {
-            currentState = EnemyState.Walk;
-            yield return new WaitForSeconds(0.3f);
-            currentState = EnemyState.Idle;
-        }
         
         public IEnumerator EnemyAttackAnimator()
         {
@@ -203,31 +197,35 @@ namespace Searching
         
         public void CreatePath()
         {
-            if (path != null && path.Count == 0)
+            if (Random.Range(0, 100) >= 50) // 50% ไม่เดิน
             {
+                return;
+            }
+
+            if (path == null)
+            {
+                Debug.LogWarning("Path is null. Retrying to generate path.");
+                GeneratePathToPlayer();
+                return;
+            }
+
+            if (path.Count == 0)
+            {
+                Debug.LogWarning("Path is empty. Retrying to generate path.");
                 isPathGenerated = false;
                 GeneratePathToPlayer();
-            }
-            else if (path == null)
-            {
-                Debug.LogWarning("Path is null. No path could be generated.");
+                return;
             }
 
-            if (path != null)
+            Node nextNode = path[0];
+            if (nextNode != null)
             {
-                if (path.Count > 0 || path == null)
-                {
-                    int randomValue = Random.Range(0, 100);
-                    if (randomValue < 50)
-                    {
-                        Node nextNode = path[0];
-                        currentNode = nextNode;
-                        MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
-                    }
-
-                }
+                currentNode = nextNode;
+                MoveToPosition(nextNode.transform.position.x, nextNode.transform.position.y);
             }
         }
+
+
         
         private void MoveAlongPath()
         {
@@ -246,26 +244,50 @@ namespace Searching
 
         private void GeneratePathToPlayer()
         {
-            if (player != null && !isPathGenerated)
+            if (player == null)
             {
-                Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-                Node endNode = AStarManager.instance.FindNearestNode(player.position);
-
-                path = AStarManager.instance.GeneratePath(startNode, endNode);
-
-                if (path == null || path.Count == 0)
-                {
-                    Debug.LogError("Failed to generate path to player.");
-                    return;
-                }
-
-                currentPathIndex = 0;
-                isPathGenerated = true;
-
-                CreatePath();
-                MoveOneStepTowardsPlayer();
+                Debug.LogError("Player transform is null. Cannot generate path.");
+                return;
             }
+
+            if (AStarManager.instance == null)
+            {
+                Debug.LogError("AStarManager instance is null. Cannot generate path.");
+                return;
+            }
+
+            Node startNode = AStarManager.instance.FindNearestNode(transform.position);
+            Node endNode = AStarManager.instance.FindNearestNode(player.position);
+
+            if (startNode == null || endNode == null)
+            {
+                Debug.LogError("Start or End Node is null. Cannot generate path.");
+                return;
+            }
+
+            path = AStarManager.instance.GeneratePath(startNode, endNode);
+
+            if (path == null || path.Count == 0)
+            {
+                Debug.LogWarning("Path generation failed. Retrying...");
+                StartCoroutine(RetryGeneratePath());
+                return;
+            }
+
+            currentPathIndex = 0;
+            isPathGenerated = true;
+            Debug.Log("Path generated successfully.");
+
+            CreatePath();
+            MoveOneStepTowardsPlayer();
         }
+
+        private IEnumerator RetryGeneratePath()
+        {
+            yield return new WaitForSeconds(0.5f);
+            GeneratePathToPlayer();
+        }
+
 
 
         public void MoveOneStepTowardsPlayer()
@@ -282,23 +304,25 @@ namespace Searching
         {
             Vector2 oldPosition = new Vector2(transform.position.x, transform.position.y);
             Vector2 newPosition = new Vector2(x, y);
+
             if (player == null)
             {
                 return;
             }
+            
             if (IsPlayer(newPosition))
             {
                 return;
             }
+            
             if (HasPlacement(oldPosition))
             {
-                if (IsEnemy(oldPosition))
+                if (IsEnemy(oldPosition) && oldPosition == newPosition)
                 {
-                    if (IsEnemy(newPosition) && oldPosition == newPosition)
-                    {
-                        path.RemoveAt(0);
-                    }
+                    path.RemoveAt(0);
+                    return;
                 }
+
                 if (IsPlayer(oldPosition))
                 {
                     return;
@@ -307,103 +331,25 @@ namespace Searching
             
             if (HasPlacement(newPosition))
             {
-                if (IsPlayer(newPosition))
+                if (HandleObstacleInNewPosition(newPosition))
                 {
                     return;
-                }
-                if (IsPotion(newPosition) && path[0] != null && player != null)
-                {
-                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
-        
-                    path = AStarManager.instance.GeneratePath(startNode, endNode);
-                    path.RemoveAt(0);
-                    StartCoroutine(MoveSmoothly(path[0].transform.position));
-                    return;
-                }
-                if (IsExit(newPosition) && path[0] != null && player != null)
-                {
-                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
-        
-                    path = AStarManager.instance.GeneratePath(startNode, endNode);
-                    path.RemoveAt(0);
-                    StartCoroutine(MoveSmoothly(path[0].transform.position));
-                    return;
-                }
-                if (IsKey(newPosition) && path[0] != null && player != null)
-                {
-                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
-        
-                    path = AStarManager.instance.GeneratePath(startNode, endNode);
-                    path.RemoveAt(0);
-                    StartCoroutine(MoveSmoothly(path[0].transform.position));
-                    return;
-                }
-                if (IsTreasure(newPosition) && path[0] != null && player != null)
-                {
-                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
-        
-                    path = AStarManager.instance.GeneratePath(startNode, endNode);
-                    path.RemoveAt(0);
-                    StartCoroutine(MoveSmoothly(path[0].transform.position));
-                    return;
-                }
-                if (IsEnemy(newPosition) && newPosition != oldPosition && path[0] != null && player != null)
-                {
-                    Node startNode = AStarManager.instance.FindNearestNode(transform.position);
-                    Node endNode = AStarManager.instance.FindNearestNode(player.position);
-        
-                    path = AStarManager.instance.GeneratePath(startNode, endNode);
-                    path.RemoveAt(0);
-                    StartCoroutine(MoveSmoothly(path[0].transform.position));
-                    return;
-                }
-                if (!IsEnemy(newPosition) && path[0] != null)
-                {
-                    path.RemoveAt(0);
-                    StartCoroutine(MoveSmoothly(path[0].transform.position));
-                    return;
-                }
-            }
-            else if (IsPlayer(newPosition))
-            {
-                return;
-            }
-            else
-            {
-                path.RemoveAt(0);
-                StartCoroutine(MoveSmoothly(newPosition));
-            }
-
-            /*if (!HasPlacement(oldPosition))
-            {
-                if (IsEnemy(oldPosition))
-                {
-                    if (IsEnemy(newPosition))
-                    {
-                        return; 
-                    }
-                    else
-                    {
-                        path.RemoveAt(0);
-                        SetNode(newPosition, "enemy");
-                        SetNode(transform.position, "empty");
-                        StartCoroutine(MoveSmoothly(newPosition));
-                    }
                 }
             }
             else
             {
-                path.RemoveAt(0);
-                SetNode(newPosition, "enemy");
-                SetNode(transform.position, "empty");
+                if (path.Count > 0)
+                {
+                    path.RemoveAt(0);
+                }
                 StartCoroutine(MoveSmoothly(newPosition));
-            }*/
+            }
             
-            
+            UpdateEnemyPositionInMap(oldPosition, newPosition);
+        }
+        
+        private void UpdateEnemyPositionInMap(Vector2 oldPosition, Vector2 newPosition)
+        {
             if (mapScript.enemies.ContainsKey(oldPosition))
             {
                 mapScript.enemies[oldPosition].Remove(this);
@@ -412,12 +358,38 @@ namespace Searching
                     mapScript.enemies.Remove(oldPosition);
                 }
             }
-            
+
             if (!mapScript.enemies.ContainsKey(newPosition))
             {
                 mapScript.enemies[newPosition] = new List<OOPEnemy>();
             }
             mapScript.enemies[newPosition].Add(this);
+        }
+        
+        private bool HandleObstacleInNewPosition(Vector2 newPosition)
+        {
+            if (IsPlayer(newPosition))
+            {
+                return true;
+            }
+            if (IsTreasure(newPosition))
+            {
+                return true;
+            }
+            if (IsExit(newPosition))
+            {
+                return true;
+            }
+            if (IsKey(newPosition))
+            {
+                return true;
+            }
+            if (IsEnemy(newPosition))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

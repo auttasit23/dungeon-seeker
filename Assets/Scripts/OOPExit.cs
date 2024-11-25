@@ -28,7 +28,10 @@ namespace Searching
                 }
                 else
                 {
-                    mapGenerator.enemyRoomCount += 1;
+                    if (mapGenerator.enemyRoomCount <= 2)
+                    {
+                        mapGenerator.enemyRoomCount += 1;
+                    }
                     GameManager.level += 1;
                     mapGenerator.player.inventory.UseItem(unlockKey);
                     StartCoroutine(mapGenerator.ResetMap());

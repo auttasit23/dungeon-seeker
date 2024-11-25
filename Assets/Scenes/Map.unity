@@ -6281,6 +6281,7 @@ MonoBehaviour:
     item: {fileID: 0}
   - quantity: 1
     item: {fileID: 0}
+  equipment: {fileID: 0}
 --- !u!95 &2142152735
 Animator:
   serializedVersion: 5
@@ -6428,7 +6429,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8365133027701863277, guid: 896fac2834903504f8973b3186300203, type: 3}
       propertyPath: enemyRoomCount
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8365133027701863277, guid: 896fac2834903504f8973b3186300203, type: 3}
       propertyPath: itemPotionCount

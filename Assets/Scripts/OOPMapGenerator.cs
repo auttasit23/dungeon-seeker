@@ -114,6 +114,7 @@ namespace Searching
             ClearNodes();
             RemoveAllEnemies();
             player.FullHeal();
+            GameManager.level = 0;
             GameObject enemy = GameObject.Find("Enemy");
 
             if (enemy != null)

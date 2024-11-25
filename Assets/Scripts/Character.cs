@@ -93,6 +93,7 @@ namespace Searching
                     {
                         StartCoroutine(mapScript.player.PlayerAttackAnimator());
                         audioManager.PlaySFX(audioManager.attack);
+                        Debug.Log(enemy);
                         enemy.Hit(targetPosition);
                         positionX -= direction.x;
                         positionY -= direction.y;
